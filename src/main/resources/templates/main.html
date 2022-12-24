@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>나를 위한 전적 검색 프로그램</title>
+    <link rel="stylesheet" herf="../static/css/main.css">
+</head>
+<body>
+    <div th:replace="header.html"></div>
+        <div class="container">
+            <div class="col-md-12 text-center p-1" id="mainHeader" style="background-color :#B1B2FF; border-radius:5px;">
+                    <div class="row g-3 my-5">
+                        <!--내 아이디 입력 란 -->
+                        <div class="offset-3 col-md-5">
+                            <input type="text" class="form-control" id="myId" name="myId" placeholder="아이디를 입력해주세요" aria-label="myId">
+                        </div>
+                        <!-- 조회 버튼-->
+                        <div class="col-md-1">
+                                <button class="form-control" type="button" onclick="idInput()">조회</button>
+                        </div>
+                    </div>
+            </div>
+            <!--게임정보-->
+            <div class="col-md-12" id="main">
+                <!--데이터 조회 상태 창-->
+                <div class="col-md-12 text-center" id="mainStatusInfo">
+                </div>
+                <!--유저정보-->
+                <div class="row m-3">
+                    <!--랭크정보-->
+                    <div class="col-md-6" id="userRankInfo">
+                    </div>
+                    <!--모스트 챔피언-->
+                    <div class="col-md-6" id="mostChamp">
+                    </div>
+                </div>
+                <!--전적 그리드 -->
+                <div class="col-md-12">
+                </div>
+            </div>
+        </div>
+
+    <script type="text/javascript" src="../js/main.js"></script>
+    <div th:replace="footer.html"></div>
+</body>
+</html>
