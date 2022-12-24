@@ -88,8 +88,9 @@ function  RankInfo(data){
                 oddComment="승률을 집계 할 수 없습니다. 관리자에게 문의해주세요.";
             }
             html+= '<div class="col-md-12 row">'+
+                                '<h2><strong>Rank Info</strong></h2>'+
                                 '<div class="col-md-3">'+
-                                    '<h5 class="offset-1"><img src="../../img/rank_icon/Emblem_'+tier.split(" ")[0]+'.png" width="85px" height="85px"></h5>'+
+                                    '<h5 class="offset-1"><img src="../img/rank_icon/Emblem_'+tier.split(" ")[0]+'.gif" style="width:85px; height:85px; border-radius:70%;"></h5>'+
                                 '</div>'+
                                 '<div class="col-md-5 p-3">'+
                                      '<h4><strong>'+tier+'</strong></h4>'+
@@ -99,13 +100,13 @@ function  RankInfo(data){
                                     '<h6>승률  '+odds+'%</h6>'+
                                     '<h6>'+wins+'승 '+losses+'패</h6>'+
                                 '</div>'+
+                           '</div>'+
                                 '<div class="col-md-12">'+
                                 '<h2><strong>Comment</strong></h2>'+
-                                '</div>'+
-                                '<div class="col-md-12 p-5">'+
-                                        '<h3><strong>'+oddComment+'</strong></h3>'+
-                                '</div>'+
-                          '</div>';
+                                      '<div class="col-md-12 p-5">'+
+                                                '<h3><strong>'+oddComment+'</strong></h3>'+
+                                        '</div>'+
+                                '</div>';
             $("#userRankInfo").append(html);
         }
     }
@@ -118,9 +119,13 @@ function  RankInfo(data){
 */
 function MostChampion(data){
     let html="";
+    let mostInfoHtml="";
     let champName="";
     let champName_kr="";
     let champions=data[2].myMostTop;
+    mostInfoHtml+='<div class="col-md-12">'+
+                       '<h2><strong>Most Champions</strong></h2>'+
+                  '</div>';
     for(let i = 0 ; i<champions.length; i++){
         champName=champions[i].id;
         champTitle=champions[i].title;
@@ -137,6 +142,7 @@ function MostChampion(data){
     }
      $("#mainStatusInfo").empty();
     $("#mostChamp").empty();
+    $("#mostChamp").append(mostInfoHtml);
     $("#mostChamp").append(html);
 }
 
@@ -181,7 +187,7 @@ function MatchInfo(){
 */
 function outPutErr(){
     let html="";
-     $("#gameStatusInfo").empty();
+     $("#userRankInfo").empty();
      $("#mostChamp").empty();
          html+=  '<div class="col-md-12">'+
                              '<h2>데이터 분석실패<h2>'+
