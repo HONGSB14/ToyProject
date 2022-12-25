@@ -187,6 +187,7 @@ function MatchInfo(){
 */
 function outPutErr(){
     let html="";
+     $("#mainStatusInfo").empty();
      $("#userRankInfo").empty();
      $("#mostChamp").empty();
          html+=  '<div class="col-md-12">'+

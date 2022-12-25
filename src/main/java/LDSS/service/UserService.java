@@ -20,7 +20,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-78e32d89-4f2c-481e-a26e-0d0a2d9dbeb2";
+        String api_key="RGAPI-617ce822-c8f0-498a-8085-50ac6a754f33";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
