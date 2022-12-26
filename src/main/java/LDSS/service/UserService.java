@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 @Service
@@ -83,10 +84,11 @@ public class UserService {
                 //만약  값이 존재 한다면 값 넘기기
                 myId=(String)myInfoValue.get("id");
                 puuId=(String)myInfoValue.get("puuid");
-                jsonArray.add(myInfoValue);
-                jsonArray.add(gameInfo(myId));
-                jsonArray.add(mainChampion(myId));
-                jsonArray.add(getMatchInfo(puuId));
+                jsonArray.add(myInfoValue);                         //유저정보
+                jsonArray.add(gameInfo(myId));                   //랭크정보
+                jsonArray.add(mainChampion(myId));        //모스트 챔피언 정보
+                jsonArray.add(getMatchInfo(puuId));          //매치정보
+//              dataProcessing(getMatchInfo(puuId));        //매치정보
             }else{
                 return null;
             }
@@ -165,14 +167,16 @@ public class UserService {
     public JSONArray getMatchInfo(String puuId){
         String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=20&";
         JSONArray jsonArray=getAPI("",MatchIdURL);
-        JSONArray ja= new JSONArray();          //최종 리턴값 JSONArray
-        String matchId="KR_6277302803?";      //임시 매치 ID
-        String gameMode="";                             //게임 모드
-        String queueId="";                                  //큐 아이디 솔랭:420  팀랭 : 440
-        int gameCount=0;                                   //솔로 랭크 게임 판수
+        JSONArray  matchValue= new JSONArray();      //데이터 받아온 값
+        JSONArray ja= new JSONArray();                          //최종 리턴값 JSONArray
+        String matchId="";                                                   //임시 매치 ID
+        String queueId="";                                                   //큐 아이디 솔랭:420  팀랭 : 440
+        int gameDuration=0;                                              //게임 지속 시간
+        int gameCount=0;                                                    //솔로 랭크 게임 판수
+
         //matchId 유무 유효성 검사
         if(jsonArray.size() !=0) {
-            System.out.println(jsonArray.size()+"GAME Data Search Start .....");
+            System.out.println(jsonArray.size()+" GAMES Data Search Start .....");
             //matchId 만큼 반복
             for (int i = 0; i < jsonArray.size(); i++) {
                 //솔로랭크게임 20판이라면 break (20판으로 데이터 가공)
@@ -181,38 +185,55 @@ public class UserService {
                 }
                 matchId = (String) (jsonArray.get(i) + "?");
                 String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
-                ja.add(getAPI(matchId, matchInfoURL).get(0));
-                JSONObject matchInfo=(JSONObject) ja.get(i);
+                matchValue.add(getAPI(matchId, matchInfoURL).get(0));
+                JSONObject matchInfo=(JSONObject) matchValue.get(i);
                 JSONObject info=(JSONObject) matchInfo.get("info");
                 JSONArray participants=(JSONArray) info.get("participants");
-                gameMode=(String)info.get("gameMode");
+                gameDuration=Integer.parseInt(String.valueOf(info.get("gameDuration")));
                 queueId=String.valueOf(info.get("queueId"));
-                if(gameMode.equals("CLASSIC") && queueId.equals("420")) {   //솔랭 데이터만 뽑기
-                    gameCount++;                                                                              //랭크 게임 판수
-                    for (int j = 0; j < participants.size(); j++) {
-                        JSONObject member = (JSONObject) participants.get(j);
-                        if (member.get("puuid").equals(puuId)) {
-                            String lane = (String) member.get("lane");
-                            System.out.println("lane = " + lane);
+                if(queueId.equals("420") && gameDuration>300  ) {                    //솔랭 데이터만 뽑기 , 다시하기 제외
+                    gameCount++;                                                                                   //랭크 게임 판수 20경기까지 조회하기위해 카운팅
+                    for (int j=0; j<participants.size(); j++) {                                        //각각의 매치경기 수 만큼
+                        JSONObject member = (JSONObject) participants.get(j);    //매치에 참여한 유저들 중에
+                        if (member.get("puuid").equals(puuId)) {                              // 유저가 검색한 아이디 찾기
+                            JSONObject jo=new JSONObject();                                        //데이터 가공값
+
+                            String lane = (String) member.get("lane");                          //1.검색한 아이디의 라인
+                            System.out.println(lane);
+                            jo.put("lane",lane);                                                                    //데이터 가공값에 넣기
+                            ja.add(jo);                                                                                    //리턴값에 넣기
                         }
                     }
+
                 }
            }
-//            String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
-//            ja.add(getAPI(matchId, matchInfoURL).get(0));
-//            JSONObject matchInfo=(JSONObject) ja.get(0);
-//            JSONObject info=(JSONObject) matchInfo.get("info");
-//            JSONArray participants=(JSONArray) info.get("participants");
-//
-//            for(int i=0; i< participants.size(); i++){
-//                    JSONObject member=(JSONObject) participants.get(i);
-//                if(member.get("puuid").equals(puuId)){
-//                    String lane=(String)member.get("lane");
-//                    System.out.println("lane = " + lane);
-//                }
-//            }
-            return ja;
+//            return ja;
+            return matchValue;
         }
         return null;
     }
+
+    /**
+     * @param
+     * @param matchInfo
+     * @return JSONObject 데이터 가공값
+     * @todo 데이터를 가공하여 화면으로 넘긴다.
+     */
+    public JSONObject dataProcessing (JSONArray matchInfo){
+        JSONObject jsonObject = new JSONObject();
+        String lane [] =new String [20];                //20경기
+        String laneCount [] = new String[6];       //[탑 ,정글, 미드 , 바텀 ,서포터 , 알수없음]
+        int i =0;
+        //주 라인 데이터에 담기
+        for(i=0; i<matchInfo.size(); i++){
+            JSONObject userGameInfo = (JSONObject) matchInfo.get(i);
+            lane [i]=(String)userGameInfo.get("lane");
+        }
+
+
+        System.out.println(Arrays.toString(lane));
+        System.out.println(Arrays.toString(laneCount));
+        return jsonObject;
+    }
 }
+
