@@ -124,8 +124,8 @@ function MostChampion(data){
     let champName_kr="";
     let champions=data[2].myMostTop;
     mostInfoHtml+='<div class="col-md-12">'+
-                       '<h2><strong>Most Champions</strong></h2>'+
-                  '</div>';
+                                    '<h2><strong>Most Champions</strong></h2>'+
+                                '</div>';
     for(let i = 0 ; i<champions.length; i++){
         champName=champions[i].id;
         champTitle=champions[i].title;

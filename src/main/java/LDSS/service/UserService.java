@@ -20,7 +20,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-617ce822-c8f0-498a-8085-50ac6a754f33";
+        String api_key="RGAPI-ed979cae-4cf3-4977-9fff-95383672dd5a";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -143,16 +143,38 @@ public class UserService {
     public JSONArray getMatchInfo(String puuId){
         String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=20&";
         JSONArray jsonArray=getAPI("",MatchIdURL);
-        JSONArray ja= new JSONArray();
-        String matchId="KR_6265554936?";
+        JSONArray ja= new JSONArray();          //최종 리턴값 JSONArray
+
+        String matchId="KR_6277302803?";
         if(jsonArray.size() !=0) {
-//            for (int i = 0; i <jsonArray.size(); i++) {
+//            for (int i = 0; i <4; i++) {
 //                matchId = (String) (jsonArray.get(i) + "?");
 //                String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
-//                ja.add(getAPI(matchId, matchInfoURL)) ;
-//            }
+//                ja.add(getAPI(matchId, matchInfoURL).get(0)) ;
+//                JSONObject matchInfo=(JSONObject) ja.get(0);
+//                JSONObject info=(JSONObject) matchInfo.get("info");
+//                JSONArray participants=(JSONArray) info.get("participants");
+//                for(int j=0; j< participants.size(); j++){
+//                    JSONObject member=(JSONObject) participants.get(j);
+//                    if(member.get("puuid").equals(puuId)){
+//                        String lane=(String)member.get("lane");
+//                        System.out.println("lane = " + lane);
+//                    }
+//                }
+//           }
             String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
-            ja.add(getAPI(matchId, matchInfoURL)) ;
+            ja.add(getAPI(matchId, matchInfoURL).get(0));
+            JSONObject matchInfo=(JSONObject) ja.get(0);
+            JSONObject info=(JSONObject) matchInfo.get("info");
+            JSONArray participants=(JSONArray) info.get("participants");
+
+            for(int i=0; i< participants.size(); i++){
+                    JSONObject member=(JSONObject) participants.get(i);
+                if(member.get("puuid").equals(puuId)){
+                    String lane=(String)member.get("lane");
+                    System.out.println("lane = " + lane);
+                }
+            }
             return ja;
         }
         return null;
