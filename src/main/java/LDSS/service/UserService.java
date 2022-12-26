@@ -15,7 +15,7 @@ import java.util.Iterator;
 public class UserService {
     /**
      * @param  paramValue API 매개변수
-     * @param  URL    API URL
+     * @param  URL  API URL
      * @todo API 로 값을 받아옴.
      * @return JSONArray
      */
@@ -59,6 +59,12 @@ public class UserService {
         }
         return null;
     }
+
+    /**
+     *  @todo  화면에서 받아온 닉네임을 통하여 값을 리턴
+     * @param myName  화면에서 닉네임을 받아옴.
+     * @return JSONArray myInfoValue,gameInfo,mainChampion,getMatchInfo
+     */
     public  JSONArray userInfo(String myName) {
             JSONArray jsonArray =new JSONArray();
             String myId="";
@@ -87,6 +93,11 @@ public class UserService {
             return jsonArray;
     }
 
+    /**
+     * @todo 랭크게임정보를 가져온다.
+     * @param myId userInfo의 ID 값
+     * @return JSONObject 랭크게임정보
+     */
     public  JSONObject gameInfo(String myId){
         JSONObject jsonObject= new JSONObject();
         String replaceId=myId+"?";
@@ -96,6 +107,12 @@ public class UserService {
         jsonObject.put("myInfo",getAPI(replaceId,gameInfoURL));
         return jsonObject;
     }
+
+    /**
+     * @todo 검색한 소환사의 모스트 챔피언을 가져온다.
+     * @param myId userInfo의 ID 값
+     * @return JSONObject 모스트 챔피언 정보
+     */
     public JSONObject mainChampion(String myId){
         JSONObject jsonObject =new JSONObject();
         ArrayList<String> championName=new ArrayList<>();
@@ -140,41 +157,60 @@ public class UserService {
         return jsonObject;
     }
 
+    /**
+     * @todo 매치정보 데이터를 가공하여 리턴다.
+     * @param puuId userInfo에서 가져오는 puuid
+     * @return
+     */
     public JSONArray getMatchInfo(String puuId){
         String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=20&";
         JSONArray jsonArray=getAPI("",MatchIdURL);
         JSONArray ja= new JSONArray();          //최종 리턴값 JSONArray
-
-        String matchId="KR_6277302803?";
+        String matchId="KR_6277302803?";      //임시 매치 ID
+        String gameMode="";                             //게임 모드
+        String queueId="";                                  //큐 아이디 솔랭:420  팀랭 : 440
+        int gameCount=0;                                   //솔로 랭크 게임 판수
+        //matchId 유무 유효성 검사
         if(jsonArray.size() !=0) {
-//            for (int i = 0; i <4; i++) {
-//                matchId = (String) (jsonArray.get(i) + "?");
-//                String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
-//                ja.add(getAPI(matchId, matchInfoURL).get(0)) ;
-//                JSONObject matchInfo=(JSONObject) ja.get(0);
-//                JSONObject info=(JSONObject) matchInfo.get("info");
-//                JSONArray participants=(JSONArray) info.get("participants");
-//                for(int j=0; j< participants.size(); j++){
-//                    JSONObject member=(JSONObject) participants.get(j);
-//                    if(member.get("puuid").equals(puuId)){
-//                        String lane=(String)member.get("lane");
-//                        System.out.println("lane = " + lane);
-//                    }
-//                }
-//           }
-            String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
-            ja.add(getAPI(matchId, matchInfoURL).get(0));
-            JSONObject matchInfo=(JSONObject) ja.get(0);
-            JSONObject info=(JSONObject) matchInfo.get("info");
-            JSONArray participants=(JSONArray) info.get("participants");
-
-            for(int i=0; i< participants.size(); i++){
-                    JSONObject member=(JSONObject) participants.get(i);
-                if(member.get("puuid").equals(puuId)){
-                    String lane=(String)member.get("lane");
-                    System.out.println("lane = " + lane);
+            System.out.println(jsonArray.size()+"GAME Data Search Start .....");
+            //matchId 만큼 반복
+            for (int i = 0; i < jsonArray.size(); i++) {
+                //솔로랭크게임 20판이라면 break (20판으로 데이터 가공)
+                if(gameCount==20){
+                    break;
                 }
-            }
+                matchId = (String) (jsonArray.get(i) + "?");
+                String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
+                ja.add(getAPI(matchId, matchInfoURL).get(0));
+                JSONObject matchInfo=(JSONObject) ja.get(i);
+                JSONObject info=(JSONObject) matchInfo.get("info");
+                JSONArray participants=(JSONArray) info.get("participants");
+                gameMode=(String)info.get("gameMode");
+                queueId=String.valueOf(info.get("queueId"));
+                if(gameMode.equals("CLASSIC") && queueId.equals("420")) {   //솔랭 데이터만 뽑기
+                    gameCount++;                                                                              //랭크 게임 판수
+                    for (int j = 0; j < participants.size(); j++) {
+                        JSONObject member = (JSONObject) participants.get(j);
+                        if (member.get("puuid").equals(puuId)) {
+                            String lane = (String) member.get("lane");
+                            System.out.println("lane = " + lane);
+                        }
+                    }
+                }
+           }
+//            String matchInfoURL = "https://asia.api.riotgames.com/lol/match/v5/matches/";
+//            ja.add(getAPI(matchId, matchInfoURL).get(0));
+//            JSONObject matchInfo=(JSONObject) ja.get(0);
+//            JSONObject info=(JSONObject) matchInfo.get("info");
+//            JSONArray participants=(JSONArray) info.get("participants");
+//
+//            for(int i=0; i< participants.size(); i++){
+//                    JSONObject member=(JSONObject) participants.get(i);
+//                if(member.get("puuid").equals(puuId)){
+//                    String lane=(String)member.get("lane");
+//                    System.out.println("lane = " + lane);
+//                }
+//            }
             return ja;
         }
         return null;
