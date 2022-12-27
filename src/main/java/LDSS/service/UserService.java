@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-ed979cae-4cf3-4977-9fff-95383672dd5a";
+        String api_key="RGAPI-3bb59178-5d03-473b-aa0c-51d0d68d9491";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -82,11 +82,11 @@ public class UserService {
                 //만약  값이 존재 한다면 값 넘기기
                 myId=(String)myInfoValue.get("id");
                 puuId=(String)myInfoValue.get("puuid");
-                jsonArray.add(myInfoValue);                         //유저정보
-                jsonArray.add(gameInfo(myId));                   //랭크정보
-                jsonArray.add(mainChampion(myId));        //모스트 챔피언 정보
-                jsonArray.add(getMatchInfo(puuId));          //매치정보
-//              dataProcessing(getMatchInfo(puuId));        //매치정보
+                jsonArray.add(myInfoValue);                                                    //유저정보
+                jsonArray.add(gameInfo(myId));                                              //랭크정보
+                jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
+                jsonArray.add(getMatchInfo(puuId));                                   //매치정보
+//                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -163,7 +163,7 @@ public class UserService {
      * @return
      */
     public JSONArray getMatchInfo(String puuId){
-        String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=20&";
+        String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=30&";
         JSONArray jsonArray=getAPI("",MatchIdURL);
         JSONArray  matchValue= new JSONArray();      //데이터 받아온 값
         JSONArray ja= new JSONArray();                          //최종 리턴값 JSONArray
@@ -223,6 +223,14 @@ public class UserService {
         //주 라인 데이터에 담기
         for(i=0; i<matchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) matchInfo.get(i);
+            if(userGameInfo.get("lane").equals("BOTTOM") || userGameInfo.get("lane").equals("NONE")){
+                if(userGameInfo.get("role").equals("SUPPORT")){
+                    lane.remove("BOTTOM");
+                    lane.add("SUPPORT");
+                }else{
+                    lane.add("BOTTOM");
+                }
+            }
             lane.add((String)userGameInfo.get("lane"));
         }
         jsonObject.put("lane",userLane(lane));  //유저의 주 라인 구하기
@@ -235,13 +243,40 @@ public class UserService {
      * @return String 주라인
      */
     public String userLane(ArrayList<String> lane){
+        int mainLineGame=0;     //주 포지션 게임 판 수
+        String mainLine="";        // 주 포지션
+
         int top=        Collections.frequency(lane,"TOP");
         int jungle=   Collections.frequency(lane,"JUNGLE");
         int mid=       Collections.frequency(lane,"MIDDLE");
         int bottom= Collections.frequency(lane,"BOTTOM");
         int support=Collections.frequency(lane,"SUPPORT");
-        
-        return "";
+        int none=Collections.frequency(lane,"NONE");
+
+        mainLineGame=none;
+        mainLine="none";
+        if(top>=mainLineGame){
+            mainLineGame=top;
+            mainLine="top";
+        }
+        if(jungle>=mainLineGame) {
+            mainLineGame=jungle;
+            mainLine="jungle";
+        }
+        if(mid>=mainLineGame){
+            mainLineGame=mid;
+            mainLine="mid";
+        }
+        if(bottom>=mainLineGame){
+            mainLineGame=bottom;
+            mainLine="bottom";
+        }
+        if(support>=mainLineGame){
+            mainLineGame=support;
+            mainLine="support";
+        }
+        System.out.println("mainLine = " + mainLine);
+        return mainLine;
     }
 
 }

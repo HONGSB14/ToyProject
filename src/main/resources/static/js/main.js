@@ -16,6 +16,7 @@ function idInput() {
                             if(RankInfo(data)!=status){
                                 RankInfo(data);
                                 MostChampion(data);
+                                lineInfo(data);
                             }else{
                                 outPutErr();
                             }
@@ -63,6 +64,7 @@ function  RankInfo(data){
     $("#userRankInfo").empty();
     $("#mainStatusInfo").empty();
     $("#mostChamp").empty();
+    $("matchDataInfo").empty();
     if(myInfo.length ==0) return status;
     for(let i=0; i<myInfo.length; i++){
         if(myInfo[i].queueType==soloQueueType){
@@ -140,7 +142,8 @@ function MostChampion(data){
                             '</div>'+
                         '</div>';
     }
-     $("#mainStatusInfo").empty();
+    $("matchDataInfo").empty();
+    $("#mainStatusInfo").empty();
     $("#mostChamp").empty();
     $("#mostChamp").append(mostInfoHtml);
     $("#mostChamp").append(html);
@@ -148,10 +151,25 @@ function MostChampion(data){
 
 
 /**
-* @todo 게임 매치 정보를 불러온다.
+* @todo 유저의 주 라인을 나타낸다.
 */
-function MatchInfo(){
+function lineInfo(data){
 
+      $("matchDataInfo").empty();
+      let line=data[3].lane;
+      if(line=="top") line=" 탑에 죽고 탑에 사는 진정한 탑 그 잡채 이시군요 !";
+      else if(line=="jungle") line="팀원들을 장기판으로 쓰는 그 잡채 정글러 이시군요 !";
+      else if(line=="mid") line="당신이 있어 팀이 존재합니다. 미드 그 잡채 이시군요!";
+      else if(line=="bottom") line="후반에 가장 중요한 핵심 그 잡채 원딜러 !";
+      else if(line=="support") line="입벌려 킬 들어간다. 서포터 그잡채 !";
+      else line="진정한 올 라운더 그 잡채 !";
+
+      html="";
+      html+='<div class="col-md-12">'+
+                        '<h2><strong>Data Analysis</strong></h2>'+
+                    '</div>'+
+                   '<h3><i>'+line+'</i></h3>';
+      $("#matchDataInfo").append(html);
 }
 
 
@@ -190,10 +208,11 @@ function outPutErr(){
      $("#mainStatusInfo").empty();
      $("#userRankInfo").empty();
      $("#mostChamp").empty();
+     $("matchDataInfo").empty();
          html+=  '<div class="col-md-12">'+
                              '<h2>데이터 분석실패<h2>'+
                               '<h2>데이터를 불러 올 수 없습니다.<h2>'+
-                              '<h6>검색하신 아이디를 다시한번 확인해주세요.</h6>'
+                              '<h6>검색하신 아이디를 다시한번 확인해주세요.</h6>'+
                          '</div>';
     $("#mainStatusInfo").append(html);
 }
