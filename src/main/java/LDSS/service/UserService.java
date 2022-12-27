@@ -8,9 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -160,7 +158,7 @@ public class UserService {
     }
 
     /**
-     * @todo 매치정보 데이터를 가공하여 리턴다.
+     * @todo 매치정보 데이터불러온다.
      * @param puuId userInfo에서 가져오는 puuid
      * @return
      */
@@ -214,26 +212,37 @@ public class UserService {
     }
 
     /**
-     * @param
      * @param matchInfo
      * @return JSONObject 데이터 가공값
      * @todo 데이터를 가공하여 화면으로 넘긴다.
      */
     public JSONObject dataProcessing (JSONArray matchInfo){
         JSONObject jsonObject = new JSONObject();
-        String lane [] =new String [20];                //20경기
-        String laneCount [] = new String[6];       //[탑 ,정글, 미드 , 바텀 ,서포터 , 알수없음]
+        ArrayList<String> lane =new ArrayList<>();
         int i =0;
         //주 라인 데이터에 담기
         for(i=0; i<matchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) matchInfo.get(i);
-            lane [i]=(String)userGameInfo.get("lane");
+            lane.add((String)userGameInfo.get("lane"));
         }
-
-
-        System.out.println(Arrays.toString(lane));
-        System.out.println(Arrays.toString(laneCount));
+        jsonObject.put("lane",userLane(lane));  //유저의 주 라인 구하기
         return jsonObject;
     }
+
+    /**
+     * @todo 검색한 유저의 주 라인을 구한다.
+     * @param lane 라인 배열
+     * @return String 주라인
+     */
+    public String userLane(ArrayList<String> lane){
+        int top=        Collections.frequency(lane,"TOP");
+        int jungle=   Collections.frequency(lane,"JUNGLE");
+        int mid=       Collections.frequency(lane,"MIDDLE");
+        int bottom= Collections.frequency(lane,"BOTTOM");
+        int support=Collections.frequency(lane,"SUPPORT");
+        
+        return "";
+    }
+
 }
 
