@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-3bb59178-5d03-473b-aa0c-51d0d68d9491";
+        String api_key="RGAPI-15b3b938-0fc0-4cd2-809d-16eada79024e";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -85,8 +85,8 @@ public class UserService {
                 jsonArray.add(myInfoValue);                                                    //유저정보
                 jsonArray.add(gameInfo(myId));                                              //랭크정보
                 jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-                jsonArray.add(getMatchInfo(puuId));                                   //매치정보
-//                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+//                jsonArray.add(getMatchInfo(puuId));                                   //매치정보
+                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -196,7 +196,7 @@ public class UserService {
                         if (member.get("puuid").equals(puuId)) {                              // 유저가 검색한 아이디 찾기
                             JSONObject jo=new JSONObject();                                        //데이터 가공값
 
-                            String lane = (String) member.get("lane");                          //1.검색한 아이디의 라인
+                            String lane = (String) member.get("teamPosition");                          //1.검색한 아이디의 라인
                             System.out.println(lane);
                             jo.put("lane",lane);                                                                    //데이터 가공값에 넣기
                             ja.add(jo);                                                                                    //리턴값에 넣기
@@ -205,8 +205,8 @@ public class UserService {
 
                 }
            }
-//            return ja;
-            return matchValue;
+            return ja;
+//            return matchValue;
         }
         return null;
     }
@@ -223,14 +223,6 @@ public class UserService {
         //주 라인 데이터에 담기
         for(i=0; i<matchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) matchInfo.get(i);
-            if(userGameInfo.get("lane").equals("BOTTOM") || userGameInfo.get("lane").equals("NONE")){
-                if(userGameInfo.get("role").equals("SUPPORT")){
-                    lane.remove("BOTTOM");
-                    lane.add("SUPPORT");
-                }else{
-                    lane.add("BOTTOM");
-                }
-            }
             lane.add((String)userGameInfo.get("lane"));
         }
         jsonObject.put("lane",userLane(lane));  //유저의 주 라인 구하기
@@ -250,30 +242,28 @@ public class UserService {
         int jungle=   Collections.frequency(lane,"JUNGLE");
         int mid=       Collections.frequency(lane,"MIDDLE");
         int bottom= Collections.frequency(lane,"BOTTOM");
-        int support=Collections.frequency(lane,"SUPPORT");
-        int none=Collections.frequency(lane,"NONE");
+        int support=Collections.frequency(lane,"UTILITY");
 
-        mainLineGame=none;
-        mainLine="none";
+
         if(top>=mainLineGame){
             mainLineGame=top;
-            mainLine="top";
+            mainLine="Top";
         }
         if(jungle>=mainLineGame) {
             mainLineGame=jungle;
-            mainLine="jungle";
+            mainLine="Jungle";
         }
         if(mid>=mainLineGame){
             mainLineGame=mid;
-            mainLine="mid";
+            mainLine="Mid";
         }
         if(bottom>=mainLineGame){
             mainLineGame=bottom;
-            mainLine="bottom";
+            mainLine="Bot";
         }
         if(support>=mainLineGame){
             mainLineGame=support;
-            mainLine="support";
+            mainLine="Support";
         }
         System.out.println("mainLine = " + mainLine);
         return mainLine;

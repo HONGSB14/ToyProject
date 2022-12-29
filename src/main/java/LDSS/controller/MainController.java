@@ -19,4 +19,5 @@ public class MainController {
     public JSONArray userInfo(@RequestParam ("myId")String myName){
        return userService.userInfo(myName);
     }
+
 }

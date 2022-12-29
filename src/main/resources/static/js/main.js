@@ -105,7 +105,7 @@ function  RankInfo(data){
                            '</div>'+
                                 '<div class="col-md-12">'+
                                 '<h2><strong>Comment</strong></h2>'+
-                                      '<div class="col-md-12 p-5">'+
+                                      '<div class="offset-3 col-md-9 py-3">'+
                                                 '<h3><strong>'+oddComment+'</strong></h3>'+
                                         '</div>'+
                                 '</div>';
@@ -157,18 +157,34 @@ function lineInfo(data){
 
       $("matchDataInfo").empty();
       let line=data[3].lane;
-      if(line=="top") line=" 탑에 죽고 탑에 사는 진정한 탑 그 잡채 이시군요 !";
-      else if(line=="jungle") line="팀원들을 장기판으로 쓰는 그 잡채 정글러 이시군요 !";
-      else if(line=="mid") line="당신이 있어 팀이 존재합니다. 미드 그 잡채 이시군요!";
-      else if(line=="bottom") line="후반에 가장 중요한 핵심 그 잡채 원딜러 !";
-      else if(line=="support") line="입벌려 킬 들어간다. 서포터 그잡채 !";
+      let lane=line;
+      let myInfo=data[1].myInfo;
+      let tier="";
+      let soloQueueType="RANKED_SOLO_5x5";
+      for(let i=0; i<myInfo.length; i++){
+              if(myInfo[i].queueType==soloQueueType){
+                    tier=myInfo[i].tier;
+              }
+      }
+      if(line=="Top") line="탑 데이터를 확인하세요. ";
+      else if(line=="Jungle") line="정글 데이터를 확인하세요.";
+      else if(line=="Mid") line="미드 데이터를 확인하세요.";
+      else if(line=="Bot") line="원딜 데이터를 확인하세요.";
+      else if(line=="Support") line="서포터 데이터를 확인하세요.";
       else line="진정한 올 라운더 그 잡채 !";
 
       html="";
-      html+='<div class="col-md-12">'+
+      html+='<div class="col-md-12 text-center">'+
                         '<h2><strong>Data Analysis</strong></h2>'+
                     '</div>'+
-                   '<h3><i>'+line+'</i></h3>';
+                    '<div class="row">'+
+                        '<div class="offset-7 col-md-1 xr-5">'+
+                            '<img src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="30px" height="30px">'+
+                        '</div>'+
+                        '<div class="col-md-4">'+
+                            '<h3><i>'+line+'</i></h3>'+
+                        '</div>'+
+                    '</div>';
       $("#matchDataInfo").append(html);
 }
 
