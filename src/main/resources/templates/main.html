@@ -7,7 +7,7 @@
 </head>
 <body>
     <div th:replace="header.html"></div>
-        <div class="container">
+        <div class="container" id="allDiv">
             <div class="col-md-12 text-center p-1" id="mainHeader" style="background-color :#6D72C3; border-radius:5px;">
                     <div class="row g-3 my-5">
                         <!--내 아이디 입력 란 -->
@@ -24,6 +24,11 @@
             <div class="col-md-12" id="main">
                 <!--데이터 조회 상태 창-->
                 <div class="col-md-12 text-center" id="mainStatusInfo"></div>
+                <!--스피너-->
+                <div class="text-center p-5" id="loading">
+                    <div class="spinner-border text-info" role="status"></div>
+                        <span>데이터 불러오는 중...</span>
+                </div>
                 <!--유저정보-->
                 <div class="row m-3">
                     <!--랭크정보-->

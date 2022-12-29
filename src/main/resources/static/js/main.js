@@ -1,9 +1,14 @@
+$(function(){
+    $("#loading").hide();   //스피너 숨기기
+});
 /**
 *   @todo:입력값
 */
 function idInput() {
     let html="";
     let status="";
+    pageClear();
+    $("#loading").show();
     $.ajax({
             url:"/user/idInput",
             data:{"myId":$("#myId").val()},
@@ -14,9 +19,9 @@ function idInput() {
                             userInfo(data);
                             status="error";
                             if(RankInfo(data)!=status){
-                                RankInfo(data);
                                 MostChampion(data);
                                 lineInfo(data);
+                                $("#loading").hide();   //스피너 숨기기
                             }else{
                                 outPutErr();
                             }
@@ -43,7 +48,7 @@ function userInfo(data){
 *  @return 내 랭크 정보
 */
 function  RankInfo(data){
-
+    pageClear();
     const oddUpper="대리 주의보!!<br> 몸을 사려야합니다! 주의하세요. ";                                                           //승률이 60% 이상
     const oddMMU="생각보다  훨씬 어려운 상대입니다.<br> 팀원의 도움을 받으세요.";                                      //승률이 55~59%
     const oddMU="평타이상 칩니다.<br> 절대 방심하지마세요.";                                                                            //승률이 50~55%
@@ -61,10 +66,6 @@ function  RankInfo(data){
     let odds="";                                                                 //승률
     let oddComment="";                                                 //승률 코멘트
     myInfo=data[1].myInfo;
-    $("#userRankInfo").empty();
-    $("#mainStatusInfo").empty();
-    $("#mostChamp").empty();
-    $("matchDataInfo").empty();
     if(myInfo.length ==0) return status;
     for(let i=0; i<myInfo.length; i++){
         if(myInfo[i].queueType==soloQueueType){
@@ -142,9 +143,6 @@ function MostChampion(data){
                             '</div>'+
                         '</div>';
     }
-    $("matchDataInfo").empty();
-    $("#mainStatusInfo").empty();
-    $("#mostChamp").empty();
     $("#mostChamp").append(mostInfoHtml);
     $("#mostChamp").append(html);
 }
@@ -155,7 +153,6 @@ function MostChampion(data){
 */
 function lineInfo(data){
 
-      $("matchDataInfo").empty();
       let line=data[3].lane;
       let lane=line;
       let myInfo=data[1].myInfo;
@@ -166,23 +163,23 @@ function lineInfo(data){
                     tier=myInfo[i].tier;
               }
       }
-      if(line=="Top") line="탑 데이터를 확인하세요. ";
-      else if(line=="Jungle") line="정글 데이터를 확인하세요.";
-      else if(line=="Mid") line="미드 데이터를 확인하세요.";
-      else if(line=="Bot") line="원딜 데이터를 확인하세요.";
-      else if(line=="Support") line="서포터 데이터를 확인하세요.";
-      else line="진정한 올 라운더 그 잡채 !";
+      if(line=="Top") line="탑";
+      else if(line=="Jungle") line="정글";
+      else if(line=="Mid") line="미드";
+      else if(line=="Bot") line="원딜";
+      else if(line=="Support") line="서포터";
+      else line="올 라운더";
 
       html="";
       html+='<div class="col-md-12 text-center">'+
-                        '<h2><strong>Data Analysis</strong></h2>'+
+                        '<h2 class="m-3"><strong>Data Analysis</strong></h2>'+
                     '</div>'+
                     '<div class="row">'+
-                        '<div class="offset-7 col-md-1 xr-5">'+
-                            '<img src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="30px" height="30px">'+
+                        '<div class="offset-6 col-md-1 px-5">'+
+                            '<img src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="40px" height="40px">'+
                         '</div>'+
-                        '<div class="col-md-4">'+
-                            '<h3><i>'+line+'</i></h3>'+
+                        '<div class="col-md-5">'+
+                            '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
                         '</div>'+
                     '</div>';
       $("#matchDataInfo").append(html);
@@ -221,14 +218,22 @@ function lineInfo(data){
 */
 function outPutErr(){
     let html="";
-     $("#mainStatusInfo").empty();
-     $("#userRankInfo").empty();
-     $("#mostChamp").empty();
-     $("matchDataInfo").empty();
          html+=  '<div class="col-md-12">'+
                              '<h2>데이터 분석실패<h2>'+
                               '<h2>데이터를 불러 올 수 없습니다.<h2>'+
                               '<h6>검색하신 아이디를 다시한번 확인해주세요.</h6>'+
                          '</div>';
+    $("#loading").hide();   //스피너 숨기기
     $("#mainStatusInfo").append(html);
+}
+
+/**
+* @todo 모든 값을 초기화 시킨다.
+*/
+function pageClear(){
+      $("#loading").hide();   //스피너 숨기기
+      $("#userRankInfo").empty();
+      $("#mainStatusInfo").empty();
+      $("#mostChamp").empty();
+      $("#matchDataInfo").empty();
 }
