@@ -176,7 +176,7 @@ function lineInfo(data){
                     '</div>'+
                     '<div class="row">'+
                         '<div class="offset-6 col-md-1 px-5">'+
-                            '<img src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="40px" height="40px">'+
+                            '<img src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="35px" height="35px">'+
                         '</div>'+
                         '<div class="col-md-5">'+
                             '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
