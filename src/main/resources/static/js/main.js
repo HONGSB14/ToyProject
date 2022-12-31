@@ -1,4 +1,4 @@
-$(function(){
+$(function() {
     $("#loading").hide();   //스피너 숨기기
 });
 /**
@@ -105,9 +105,9 @@ function  RankInfo(data){
                                 '</div>'+
                            '</div>'+
                                 '<div class="col-md-12">'+
-                                '<h2><strong>Comment</strong></h2>'+
-                                      '<div class="offset-3 col-md-9 py-3">'+
-                                                '<h3><strong>'+oddComment+'</strong></h3>'+
+                                '<h2 class="py-2"><strong>Comment</strong></h2>'+
+                                      '<div class="offset-3 col-md-9 py-5">'+
+                                                '<h3 class="py-3"><strong>'+oddComment+'</strong></h3>'+
                                         '</div>'+
                                 '</div>';
             $("#userRankInfo").append(html);

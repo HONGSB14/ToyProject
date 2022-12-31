@@ -13,7 +13,7 @@ public class Index {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:ss");
         String today=sdf.format(date);
         String springVer=org.springframework.core.SpringVersion.getVersion();
-        
+
         System.out.println("Now Spring Version Check>>>>>>"+springVer);
         System.out.println("Server Start Time Check>>>>>>>>"+today);
         System.out.println("hello, Admin!!!");
