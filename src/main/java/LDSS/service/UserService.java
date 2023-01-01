@@ -13,9 +13,9 @@ import java.util.*;
 @Service
 public class UserService {
     /**
+     *  @todo API 로 값을 받아온다.
      * @param  paramValue API 매개변수
      * @param  URL  API URL
-     * @todo API 로 값을 받아옴.
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
@@ -60,7 +60,7 @@ public class UserService {
     }
 
     /**
-     *  @todo  화면에서 받아온 닉네임을 통하여 값을 리턴
+     *  @todo  화면에서 받아온 닉네임을 통하여 값을 리턴한다.
      * @param myName  화면에서 닉네임을 받아옴.
      * @return JSONArray myInfoValue,gameInfo,mainChampion,getMatchInfo
      */
@@ -85,8 +85,8 @@ public class UserService {
                 jsonArray.add(myInfoValue);                                                    //유저정보
                 jsonArray.add(gameInfo(myId));                                              //랭크정보
                 jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-//                jsonArray.add(getMatchInfo(puuId));                                   //매치정보
-                jsonArray.add(dataProcessing(getMatchInfo(puuId)));         //매치정보
+//                jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -167,6 +167,7 @@ public class UserService {
         JSONArray jsonArray=getAPI("",MatchIdURL);
         JSONArray  matchValue= new JSONArray();      //매치 데이터 받아온 값
         JSONArray ja= new JSONArray();                          //최종 리턴값 JSONArray
+        ArrayList<String> matchIds= new ArrayList<>();  //타임라인
         String matchId="";                                                   //임시 매치 ID
         String queueId="";                                                   //큐 아이디 솔랭:420  팀랭 : 440
         int gameDuration=0;                                              //게임 지속 시간
@@ -189,18 +190,17 @@ public class UserService {
                 JSONArray participants=(JSONArray) info.get("participants");
                 gameDuration=Integer.parseInt(String.valueOf(info.get("gameDuration")));
                 queueId=String.valueOf(info.get("queueId"));
-                if(queueId.equals("420") && gameDuration>300  ) {                                                                   //솔랭 데이터만 뽑기 , 다시하기 제외
-                    gameCount++;                                                                                                                              //랭크 게임 판수 20경기까지 조회하기위해 카운팅
-                    for (int j=0; j<participants.size(); j++) {                                                                                      //각각의 매치경기 수 만큼
-                        JSONObject member = (JSONObject) participants.get(j);                                                     //매치에 참여한 유저들 중에
-                        if (member.get("puuid").equals(puuId)) {                                                                            // 유저가 검색한 아이디 찾기
-                            JSONObject jo=new JSONObject();                                                                                     //데이터 가공값
-                            String lane = (String) member.get("teamPosition");                                                        //1. 검색한 아이디의 라인
-                            int wardsPlaced=Integer.parseInt(String.valueOf(member.get("wardsPlaced")));      //2. 와드 설치 개수
-                            jo.put("wardsPlaced",wardsPlaced);
-                            jo.put("lane",lane);                                                                                                              //데이터 가공값에 넣기
+                if(queueId.equals("420") && gameDuration>300  ) {                                                                         //솔랭 데이터만 뽑기 , 다시하기 제외
+                    gameCount++;                                                                                                                                       //랭크 게임 판수 20경기까지 조회하기위해 카운팅
+                    JSONObject jo=new JSONObject();                                                                                                    //데이터 가공객체
+                    for (int j=0; j<participants.size(); j++) {                                                                                            //각각의 매치경기 수 만큼
+                        JSONObject member = (JSONObject) participants.get(j);                                                         //매치에 참여한 유저들 중에
+                        if (member.get("puuid").equals(puuId)) {                                                                                  // 유저가 검색한 아이디 찾기
 
-                            ja.add(jo);                                                                                                                              //리턴값에 넣기
+                            String lane = (String) member.get("teamPosition");                                                            //1. 검색한 아이디의 라인
+
+                            jo.put("lane",lane);                                                                                                                      //데이터 가공값에 넣기
+                            ja.add(jo);                                                                                                                                     //리턴값에 넣기
                         }
                     }
                 }
@@ -219,7 +219,7 @@ public class UserService {
     public JSONObject dataProcessing (JSONArray getMatchInfo){
         JSONObject jsonObject = new JSONObject();
         ArrayList<String> lane =new ArrayList<>();
-        ArrayList<Integer> wardsPlaced=new ArrayList<>();
+
         int i =0;
         String line ="";
         System.out.println(getMatchInfo);
@@ -227,13 +227,9 @@ public class UserService {
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             lane.add((String)userGameInfo.get("lane"));
-            wardsPlaced.add((Integer)userGameInfo.get("wardsPlaced"));
         }
-        //주라인 데이터 넘기기
-        if(line.equals("Top")) topData();
         line=userLane(lane);
-        jsonObject.put("lane",line);
-        jsonObject.put("wardsPlaced",wardsPlaced);
+        jsonObject.put("lane",line);                    //주 라인
         return jsonObject;
     }
 
@@ -277,9 +273,5 @@ public class UserService {
         return mainLine;
     }
 
-    public HashMap<String,String> topData(){
-
-        return null;
-    }
 }
 
