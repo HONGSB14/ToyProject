@@ -155,6 +155,7 @@ function lineInfo(data){
 
       let line=data[3].lane;
       let lane=line;
+      console.log(lane);
       let myInfo=data[1].myInfo;
       let tier="";
       let soloQueueType="RANKED_SOLO_5x5";
@@ -169,7 +170,6 @@ function lineInfo(data){
       else if(line=="Bot") line="원딜";
       else if(line=="Support") line="서포터";
       else line="올 라운더";
-
       html="";
       html+='<div class="col-md-12 text-center">'+
                         '<h2 class="m-3"><strong>Data Analysis</strong></h2>'+

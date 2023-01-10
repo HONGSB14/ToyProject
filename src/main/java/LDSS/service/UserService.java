@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-bc144c23-c5b7-4269-b802-68c1ad2ba67e";
+        String api_key="RGAPI-c82cc8b0-b98b-4780-989c-746a7041a34d";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -85,8 +85,8 @@ public class UserService {
                 jsonArray.add(myInfoValue);                                                    //유저정보
                 jsonArray.add(gameInfo(myId));                                              //랭크정보
                 jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-//                jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+                jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+//                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -205,8 +205,8 @@ public class UserService {
                     }
                 }
            }
-            return ja;
-//           return matchValue;
+//            return ja;
+           return matchValue;
         }
         return null;
     }
