@@ -221,7 +221,7 @@ function outPutErr(){
          html+=  '<div class="col-md-12">'+
                              '<h2>데이터 분석실패<h2>'+
                               '<h2>데이터를 불러 올 수 없습니다.<h2>'+
-                              '<h6>검색하신 아이디를 다시한번 확인해주세요.</h6>'+
+                              '<h6>검색하신 아이디를 다시한번 확인해주세요. </h6>'
                          '</div>';
     $("#loading").hide();   //스피너 숨기기
     $("#mainStatusInfo").append(html);
