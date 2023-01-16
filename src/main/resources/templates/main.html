@@ -9,14 +9,22 @@
     <div th:replace="header.html"></div>
         <div class="container" id="allDiv">
             <div class="col-md-12 text-center p-1" id="mainHeader" style="background-color :#6D72C3; border-radius:5px;">
-                    <div class="row g-3 my-5">
+                    <div class="row g-3">
+                        <!--백그라운드 이미지 넣는 곳 -->
+                        <div class="col-md-1">
+                            <img src="../img/bg_illust/bg_jinx.png" width="150px" height="150px">
+                        </div>
                         <!--내 아이디 입력 란 -->
-                        <div class="offset-3 col-md-5">
+                        <div class="offset-2 col-md-5 my-5">
                             <input type="text" class="form-control" id="myId" name="myId" placeholder="아이디를 입력해주세요" aria-label="myId">
                         </div>
                         <!-- 조회 버튼-->
-                        <div class="col-md-1">
+                        <div class="col-md-1 my-5">
                                 <button class="form-control" type="button" onclick="idInput()">조회</button>
+                        </div>
+                        <!--백그라운드 이미지 넣는 곳 -->
+                        <div class="offset-2 col-md-1">
+                            <!-- <img src="이미지 넣을 파일명" width="150px" height="150px"> -->
                         </div>
                     </div>
             </div>

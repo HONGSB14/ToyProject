@@ -23,7 +23,7 @@ function idInput() {
                                 lineInfo(data);
                                 $("#loading").hide();   //스피너 숨기기
                             }else{
-                                outPutErr();
+                                outPutGameErr();
                             }
                   }else{
                         outPutErr();
@@ -50,11 +50,11 @@ function userInfo(data){
 function  RankInfo(data){
     pageClear();
     const oddUpper="대리 주의보!!<br> 몸을 사려야합니다! 주의하세요. ";                                                           //승률이 60% 이상
-    const oddMMU="생각보다  훨씬 어려운 상대입니다.<br> 팀원의 도움을 받으세요.";                                      //승률이 55~59%
+    const oddMMU="생각보다  훨씬 어려운 상대입니다.<br>자존심을 낮추고<br>팀원의 도움을 받으세요.";  //승률이 55~59%
     const oddMU="평타이상 칩니다.<br> 절대 방심하지마세요.";                                                                            //승률이 50~55%
     const oddMiddle="나사가 하나 빠졌습니다. <br>빠르게 파악 후<br> 나사빠진 부분을 공략해야합니다.";  //승률이 45~49%
-    const oddML="방심만 하지 않는다면 <br>무난하게 이길 수 있습니다.";                                                          //승률이 42~44%
-    const oddLow="솔직히 만만한 상대입니다. <br>지면 자신을 되돌아보세요.";                                                //승률이 41%이하
+    const oddML="방심만 하지 않는다면 <br>무난하게 이길 수 있습니다.";                                                           //승률이 42~44%
+    const oddLow="솔직히 만만한 상대입니다. <br>지면 자신을 되돌아보세요.";                                                 //승률이 41%이하
     let html= "";
     let soloQueueType="RANKED_SOLO_5x5";         // 큐타입
     let status="error";                                                     //존재하지 않는 소환사 상태값
@@ -111,6 +111,8 @@ function  RankInfo(data){
                                         '</div>'+
                                 '</div>';
             $("#userRankInfo").append(html);
+        }else{
+            return status;
         }
     }
 }
@@ -222,6 +224,21 @@ function outPutErr(){
                              '<h2>데이터 분석실패<h2>'+
                               '<h2>데이터를 불러 올 수 없습니다.<h2>'+
                               '<h6>검색하신 아이디를 다시한번 확인해주세요. </h6>'
+                         '</div>';
+    $("#loading").hide();   //스피너 숨기기
+    $("#mainStatusInfo").append(html);
+}
+
+/**
+*   @todo 게임 판수 부족 시 에러화면을  나타낸다.
+*   @return 에러화면
+*/
+function outPutGameErr(){
+    let html="";
+         html+=  '<div class="col-md-12">'+
+                             '<h2>데이터 분석실패<h2>'+
+                              '<h2>데이터를 불러 올 수 없습니다.<h2>'+
+                              '<h6>솔로랭크 게임 기준 10판 이상 게임을 진행했는지 확인해 주세요. </h6>'
                          '</div>';
     $("#loading").hide();   //스피너 숨기기
     $("#mainStatusInfo").append(html);
