@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -19,7 +20,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-8b40f38b-8473-4c4b-9d1c-becf009cd09a";
+        String api_key="RGAPI-50de2d29-d72d-4e8b-8359-b1ffc003c6b3";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -60,7 +61,7 @@ public class UserService {
     }
 
     /**
-     *  @todo  화면에서 받아온 닉네임을 통하여 값을 리턴한다.
+     *  @todo  화면에서 받아온 닉네임을 통해  함수를 만들어 값을 리턴한다.
      * @param myName  화면에서 닉네임을 받아옴.
      * @return JSONArray myInfoValue,gameInfo,mainChampion,getMatchInfo
      */
@@ -85,8 +86,8 @@ public class UserService {
                 jsonArray.add(myInfoValue);                                                    //유저정보
                 jsonArray.add(gameInfo(myId));                                              //랭크정보
                 jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-                jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-//                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+//               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -198,44 +199,50 @@ public class UserService {
                         if (member.get("puuid").equals(puuId)) {                                                                                  // 유저가 검색한 아이디 찾기
 
                             String lane = (String) member.get("teamPosition");                                                            //1. 검색한 아이디의 라인
+                            String chmpionName=(String)member.get("championName");                                      //2. 검색한 아이디의 챔피언
 
-                            jo.put("lane",lane);                                                                                                                      //데이터 가공값에 넣기
+                            jo.put("lane",lane);                                                                                                                      //데이터 가공값에 넣기 1.라인
+                            jo.put("chmpionName",chmpionName);                                                                               //2.챔피언 이름
                             ja.add(jo);                                                                                                                                     //리턴값에 넣기
                         }
                     }
                 }
            }
-//            return ja;
-           return matchValue;
+           return ja;
+//           return matchValue;
         }
         return null;
     }
 
     /**
+     * @todo 데이터를 가공하여 화면으로 넘긴다.
      * @param getMatchInfo
      * @return JSONObject 데이터 가공값
-     * @todo 데이터를 가공하여 화면으로 넘긴다.
      */
     public JSONObject dataProcessing (JSONArray getMatchInfo){
         JSONObject jsonObject = new JSONObject();
         ArrayList<String> lane =new ArrayList<>();
-
+        ArrayList<String> ChampName=new ArrayList<>();
         int i =0;
         String line ="";
-        System.out.println(getMatchInfo);
+        String chmpionRole="";
         //공용  데이터에 담기
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             lane.add((String)userGameInfo.get("lane"));
+            ChampName.add((String)userGameInfo.get("chmpionName"));
+
         }
         line=userLane(lane);
-        jsonObject.put("lane",line);                    //주 라인
+        chmpionRole=getRole(ChampName);
+        jsonObject.put("lane",line);  //주 라인
+        jsonObject.put("chmpionRole",chmpionRole);
         return jsonObject;
     }
 
     /**
      * @todo 검색한 유저의 주 라인을 구한다.
-     * @param lane 라인 배열
+     * @param   lane 라인배열
      * @return String 주라인
      */
     public String userLane(ArrayList<String> lane){
@@ -273,5 +280,29 @@ public class UserService {
         return mainLine;
     }
 
+    /**
+     * @param
+     * @param myChampName
+     * @return String role  (자주하는 챔피언의 역할군)
+     * @todo 유저가 자주하는 역할군을 가져온다.
+     */
+    public String getRole(ArrayList<String> myChampName){
+        ArrayList<String> championName= new ArrayList<>();
+        ArrayList<String> chmpionRole= new ArrayList<>();
+        String championsURL="https://ddragon.leagueoflegends.com/cdn/10.6.1/data/ko_KR/champion.json";
+        //챔피언 정보 API
+        JSONArray zero =getAPI("?",championsURL);
+        JSONObject data= (JSONObject) zero.get(0);
+        JSONObject champions=(JSONObject) data.get("data");
+        Iterator<String>c = champions.keySet().iterator();
+        while (c.hasNext()) {
+            championName.add(c.next().toString());
+        }
+        System.out.println(champions);
+        System.out.println("20경기 챔피언 내역 >"+myChampName.toString());
+        System.out.println("모든 챔피언 내역>"+championName.toString());
+        //이름을 서로 조회하여 "tags" 를 조회해야함.
+        return null;
+    }
 }
 
