@@ -287,6 +287,7 @@ public class UserService {
      * @todo 유저가 자주하는 역할군을 가져온다.
      */
     public String getRole(ArrayList<String> myChampName){
+        String role="";
         ArrayList<String> championName= new ArrayList<>();
         ArrayList<String> chmpionRole= new ArrayList<>();
         String championsURL="https://ddragon.leagueoflegends.com/cdn/10.6.1/data/ko_KR/champion.json";
@@ -302,6 +303,13 @@ public class UserService {
         System.out.println("20경기 챔피언 내역 >"+myChampName.toString());
         System.out.println("모든 챔피언 내역>"+championName.toString());
         //이름을 서로 조회하여 "tags" 를 조회해야함.
+        for(int i=0; i< myChampName.size(); i++){
+            for(int j=0; i<championName.size(); j++){
+                if(myChampName.get(i).equals(championName.get(j))){
+
+                }
+            }
+        }
         return null;
     }
 }
