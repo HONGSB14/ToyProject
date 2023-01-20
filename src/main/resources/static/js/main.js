@@ -6,7 +6,7 @@ $(function() {
 */
 function idInput() {
     let html="";
-    let status="";
+    let status="error";       //error 발생
     pageClear();
     $("#loading").show();
     $.ajax({
@@ -14,11 +14,9 @@ function idInput() {
             data:{"myId":$("#myId").val()},
             method:'POST',
             success:function (data){
-                   console.log(data);
                     if(data!=false){
-                            userInfo(data);
-                            status="error";
                             if(RankInfo(data)!=status){
+                                userInfo(data);
                                 MostChampion(data);
                                 lineInfo(data);
                                 $("#loading").hide();   //스피너 숨기기
@@ -57,7 +55,7 @@ function  RankInfo(data){
     const oddLow="솔직히 만만한 상대입니다. <br>지면 자신을 되돌아보세요.";                                                 //승률이 41%이하
     let html= "";
     let soloQueueType="RANKED_SOLO_5x5";         // 큐타입
-    let status="error";                                                     //존재하지 않는 소환사 상태값
+
     let myInfo="";                                                            //전체적인 랭크정보 (솔랭,팀랭)
     let tier="";                                                                   //자신의 티어
     let point="";                                                                //리그 포인트
@@ -65,6 +63,7 @@ function  RankInfo(data){
     let losses="";                                                               //패배 횟수
     let odds="";                                                                 //승률
     let oddComment="";                                                 //승률 코멘트
+    let status="error";
     myInfo=data[1].myInfo;
     if(myInfo.length ==0) return status;
     for(let i=0; i<myInfo.length; i++){
@@ -111,6 +110,7 @@ function  RankInfo(data){
                                         '</div>'+
                                 '</div>';
             $("#userRankInfo").append(html);
+            return
         }else{
             return status;
         }
@@ -157,7 +157,6 @@ function lineInfo(data){
 
       let line=data[3].lane;
       let lane=line;
-      console.log(lane);
       let myInfo=data[1].myInfo;
       let tier="";
       let soloQueueType="RANKED_SOLO_5x5";
@@ -234,6 +233,7 @@ function outPutErr(){
 *   @return 에러화면
 */
 function outPutGameErr(){
+    pageClear();
     let html="";
          html+=  '<div class="col-md-12">'+
                              '<h2>데이터 분석실패<h2>'+

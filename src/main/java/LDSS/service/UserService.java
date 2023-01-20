@@ -6,7 +6,6 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -125,7 +124,7 @@ public class UserService {
 
         //해당 API URL
         String mainChampionURL="https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/";
-        String championsURL="https://ddragon.leagueoflegends.com/cdn/10.6.1/data/ko_KR/champion.json";
+        String championsURL="https://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
         //챔피언 정보 API
         JSONArray zero =getAPI("?",championsURL);
         JSONObject data= (JSONObject) zero.get(0);
@@ -211,7 +210,7 @@ public class UserService {
            return ja;
 //           return matchValue;
         }
-        return null;
+        return ja;
     }
 
     /**
@@ -231,7 +230,6 @@ public class UserService {
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             lane.add((String)userGameInfo.get("lane"));
             ChampName.add((String)userGameInfo.get("chmpionName"));
-
         }
         line=userLane(lane);
         chmpionRole=getRole(ChampName);
@@ -281,16 +279,17 @@ public class UserService {
     }
 
     /**
-     * @param
+     * @todo 유저가 자주하는 역할군을 가져온다.
      * @param myChampName
      * @return String role  (자주하는 챔피언의 역할군)
-     * @todo 유저가 자주하는 역할군을 가져온다.
      */
     public String getRole(ArrayList<String> myChampName){
+        String champMapping="";
         String role="";
         ArrayList<String> championName= new ArrayList<>();
-        ArrayList<String> chmpionRole= new ArrayList<>();
-        String championsURL="https://ddragon.leagueoflegends.com/cdn/10.6.1/data/ko_KR/champion.json";
+        ArrayList<String> roles = new ArrayList<>();
+
+        String championsURL="https://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
         //챔피언 정보 API
         JSONArray zero =getAPI("?",championsURL);
         JSONObject data= (JSONObject) zero.get(0);
@@ -299,17 +298,28 @@ public class UserService {
         while (c.hasNext()) {
             championName.add(c.next().toString());
         }
-        System.out.println(champions);
         System.out.println("20경기 챔피언 내역 >"+myChampName.toString());
-        System.out.println("모든 챔피언 내역>"+championName.toString());
-        //이름을 서로 조회하여 "tags" 를 조회해야함.
-        for(int i=0; i< myChampName.size(); i++){
-            for(int j=0; i<championName.size(); j++){
-                if(myChampName.get(i).equals(championName.get(j))){
-
+        //이름을 서로 조회하여 "tags" 를 조회해야함
+        for(int i = 0 ; i<championName.size(); i++){
+            champMapping=championName.get(i);
+            JSONObject champInfo=(JSONObject)champions.get(champMapping);
+            for(int j=0; j< myChampName.size(); j++){
+                if(champMapping.equals(myChampName.get(j))){
+                    JSONArray tagArr=(JSONArray) champInfo.get("tags");
+                    for(int cnt=0; cnt<tagArr.size(); cnt++){
+                            role=(String)tagArr.get(cnt);
+                            roles.add(role);
+                    }
                 }
             }
         }
+
+        int Assassin=                Collections.frequency(roles,"Assassin");
+        int Mege=           Collections.frequency(roles,"Mege");
+        int Tank=               Collections.frequency(roles,"Tank");
+        int Support=         Collections.frequency(roles,"Support");
+        int Fighter=        Collections.frequency(roles,"Fighter");
+        int MarksMan=   Collections.frequency(roles,"MarksMan");
         return null;
     }
 }
