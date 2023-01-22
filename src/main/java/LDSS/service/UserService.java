@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-50de2d29-d72d-4e8b-8359-b1ffc003c6b3";
+        String api_key="RGAPI-99152124-5a54-4931-b283-595444689c19";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -224,7 +224,7 @@ public class UserService {
         ArrayList<String> ChampName=new ArrayList<>();
         int i =0;
         String line ="";
-        String chmpionRole="";
+        String champRole="";
         //공용  데이터에 담기
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
@@ -232,9 +232,9 @@ public class UserService {
             ChampName.add((String)userGameInfo.get("chmpionName"));
         }
         line=userLane(lane);
-        chmpionRole=getRole(ChampName);
+        champRole=getRole(ChampName);
         jsonObject.put("lane",line);  //주 라인
-        jsonObject.put("chmpionRole",chmpionRole);
+        jsonObject.put("champRole",champRole);
         return jsonObject;
     }
 
@@ -286,6 +286,8 @@ public class UserService {
     public String getRole(ArrayList<String> myChampName){
         String champMapping="";
         String role="";
+        String mainRole="";
+        int roleGame=0;
         ArrayList<String> championName= new ArrayList<>();
         ArrayList<String> roles = new ArrayList<>();
 
@@ -298,7 +300,6 @@ public class UserService {
         while (c.hasNext()) {
             championName.add(c.next().toString());
         }
-        System.out.println("20경기 챔피언 내역 >"+myChampName.toString());
         //이름을 서로 조회하여 "tags" 를 조회해야함
         for(int i = 0 ; i<championName.size(); i++){
             champMapping=championName.get(i);
@@ -313,14 +314,39 @@ public class UserService {
                 }
             }
         }
+        //System.out.println(roles.toString());     유저가  20경기동안 한 역할군
+        int assassin=       Collections.frequency(roles,"Assassin");
+        int mage=             Collections.frequency(roles,"Mage");
+        int tank=             Collections.frequency(roles,"Tank");
+        int support=       Collections.frequency(roles,"Support");
+        int fighter=        Collections.frequency(roles,"Fighter");
+        int marksMan=  Collections.frequency(roles,"Marksman");
 
-        int Assassin=                Collections.frequency(roles,"Assassin");
-        int Mege=           Collections.frequency(roles,"Mege");
-        int Tank=               Collections.frequency(roles,"Tank");
-        int Support=         Collections.frequency(roles,"Support");
-        int Fighter=        Collections.frequency(roles,"Fighter");
-        int MarksMan=   Collections.frequency(roles,"MarksMan");
-        return null;
+        if(assassin>=roleGame){
+            mainRole="assassin";
+            roleGame=assassin;
+        }
+        if(mage>= roleGame){
+            mainRole="mage";
+            roleGame=mage;
+        }
+        if(tank>= roleGame){
+            mainRole="tank";
+            roleGame=tank;
+        }
+        if(fighter>= roleGame){
+            mainRole="fighter";
+            roleGame=fighter;
+        }
+        if(support>= roleGame){
+            mainRole="support";
+            roleGame=support;
+        }
+        if(marksMan>= roleGame){
+            mainRole="marksMan";
+            roleGame=marksMan;
+        }
+        return mainRole;
     }
 }
 

@@ -14,6 +14,7 @@ function idInput() {
             data:{"myId":$("#myId").val()},
             method:'POST',
             success:function (data){
+                    console.log(data);
                     if(data!=false){
                             if(RankInfo(data)!=status){
                                 userInfo(data);
@@ -156,7 +157,9 @@ function MostChampion(data){
 function lineInfo(data){
 
       let line=data[3].lane;
+      let tag=data[3].champRole;
       let lane=line;
+      let role=tag;
       let myInfo=data[1].myInfo;
       let tier="";
       let soloQueueType="RANKED_SOLO_5x5";
@@ -171,6 +174,9 @@ function lineInfo(data){
       else if(line=="Bot") line="원딜";
       else if(line=="Support") line="서포터";
       else line="올 라운더";
+       //여기부터 개발 시작
+       if(tag=="assassin")  role="암살자";
+
       html="";
       html+='<div class="col-md-12 text-center">'+
                         '<h2 class="m-3"><strong>Data Analysis</strong></h2>'+
