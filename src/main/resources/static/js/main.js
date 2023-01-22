@@ -175,8 +175,13 @@ function lineInfo(data){
       else if(line=="Support") line="서포터";
       else line="올 라운더";
        //여기부터 개발 시작
-       if(tag=="assassin")  role="암살자";
-
+       if(tag=="assassin")                role="암살자";
+       else if(tag=="mage")             role="마법사";
+       else if(tag=="tank")               role="탱커";
+       else if(tag=="fighter")           role="브루저";
+       else if(tag=="support")          role="서포터";
+       else if(tag=="marksMan")    role="원거리 딜러";
+       else                                         role="unknown";
       html="";
       html+='<div class="col-md-12 text-center">'+
                         '<h2 class="m-3"><strong>Data Analysis</strong></h2>'+
@@ -187,6 +192,7 @@ function lineInfo(data){
                         '</div>'+
                         '<div class="col-md-5">'+
                             '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
+                            '<h5><i> 주 포지션은 '+role+' 입니다.</i></h5>'+
                         '</div>'+
                     '</div>';
       $("#matchDataInfo").append(html);
