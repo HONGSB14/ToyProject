@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-99152124-5a54-4931-b283-595444689c19";
+        String api_key="RGAPI-c996af84-5758-4188-abcf-4921b909b2b0";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -69,7 +69,7 @@ public class UserService {
             String myId="";
             String puuId="";
             //입력값 공백 제거
-            String reMyName=myName.replace(" ","")+"?";
+            String reMyName=myName.replace(" ","%20")+"?";          // %20 은 공백을 설정한 값을 뜻한다
             //해당 API URL
             String userInfoURL="https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
             //getAPI 메소드를 통해 API값 가져오기 (나)
@@ -233,8 +233,8 @@ public class UserService {
         }
         line=userLane(lane);
         champRole=getRole(ChampName);
-        jsonObject.put("lane",line);  //주 라인
-        jsonObject.put("champRole",champRole);
+        jsonObject.put("lane", line);  //주 라인
+        jsonObject.put("champRole", champRole);
         return jsonObject;
     }
 
@@ -314,7 +314,7 @@ public class UserService {
                 }
             }
         }
-        //System.out.println(roles.toString());     유저가  20경기동안 한 역할군
+        System.out.println(roles.toString());     //유저가  20경기동안 한 역할군
         int assassin=       Collections.frequency(roles,"Assassin");
         int mage=             Collections.frequency(roles,"Mage");
         int tank=             Collections.frequency(roles,"Tank");

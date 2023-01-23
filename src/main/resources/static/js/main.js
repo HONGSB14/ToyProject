@@ -56,7 +56,6 @@ function  RankInfo(data){
     const oddLow="솔직히 만만한 상대입니다. <br>지면 자신을 되돌아보세요.";                                                 //승률이 41%이하
     let html= "";
     let soloQueueType="RANKED_SOLO_5x5";         // 큐타입
-
     let myInfo="";                                                            //전체적인 랭크정보 (솔랭,팀랭)
     let tier="";                                                                   //자신의 티어
     let point="";                                                                //리그 포인트
@@ -66,7 +65,7 @@ function  RankInfo(data){
     let oddComment="";                                                 //승률 코멘트
     let status="error";
     myInfo=data[1].myInfo;
-    if(myInfo.length ==0) return status;
+    if( myInfo.length == 0 ) return status;
     for(let i=0; i<myInfo.length; i++){
         if(myInfo[i].queueType==soloQueueType){
             tier=myInfo[i].tier;
@@ -112,10 +111,9 @@ function  RankInfo(data){
                                 '</div>';
             $("#userRankInfo").append(html);
             return
-        }else{
-            return status;
         }
     }
+    return status;
 }
 
 /**
@@ -178,10 +176,11 @@ function lineInfo(data){
        if(tag=="assassin")                role="암살자";
        else if(tag=="mage")             role="마법사";
        else if(tag=="tank")               role="탱커";
-       else if(tag=="fighter")           role="브루저";
-       else if(tag=="support")          role="서포터";
-       else if(tag=="marksMan")    role="원거리 딜러";
-       else                                         role="unknown";
+       else if(tag=="fighter")          role="브루저";
+       else if(tag=="support")        role="유틸";
+       else if(tag=="marksMan")   role="원거리 딜러";
+       else                                          role="unknown";
+
       html="";
       html+='<div class="col-md-12 text-center">'+
                         '<h2 class="m-3"><strong>Data Analysis</strong></h2>'+
@@ -192,7 +191,7 @@ function lineInfo(data){
                         '</div>'+
                         '<div class="col-md-5">'+
                             '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
-                            '<h5><i> 주 포지션은 '+role+' 입니다.</i></h5>'+
+                            '<span><i> 주로 한 챔피언 타입은　</i></span><span style="color:#5941A9"><i>'+role+'</i></span><span><i>　입니다.</i></span>'+
                         '</div>'+
                     '</div>';
       $("#matchDataInfo").append(html);
