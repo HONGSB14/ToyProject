@@ -48,14 +48,14 @@ function userInfo(data){
 */
 function  RankInfo(data){
     pageClear();
-    const oddUpper="대리 주의보!!<br> 몸을 사려야합니다! 주의하세요. ";                                                           //승률이 60% 이상
-    const oddMMU="생각보다  훨씬 어려운 상대입니다.<br>자존심을 낮추고<br>팀원의 도움을 받으세요.";  //승률이 55~59%
-    const oddMU="평타이상 칩니다.<br> 절대 방심하지마세요.";                                                                            //승률이 50~55%
-    const oddMiddle="나사가 하나 빠졌습니다. <br>빠르게 파악 후<br> 나사빠진 부분을 공략해야합니다.";  //승률이 45~49%
-    const oddML="방심만 하지 않는다면 <br>무난하게 이길 수 있습니다.";                                                           //승률이 42~44%
-    const oddLow="솔직히 만만한 상대입니다. <br>지면 자신을 되돌아보세요.";                                                 //승률이 41%이하
+    const oddUpper="대리 주의보!!<br> 몸을 사려야합니다! 주의하세요. ";                                                             //승률이 60% 이상
+    const oddMMU="생각보다  훨씬 어려운 상대입니다.<br>자존심을 낮추고<br>팀원의 도움을 받으세요.";        //승률이 55~59%
+    const oddMU="평타이상 칩니다.<br> 절대 방심하지마세요.";                                                                             //승률이 50~55%
+    const oddMiddle="나사가 하나 빠졌습니다. <br>빠르게 파악 후<br> 나사빠진 부분을 공략해야합니다.";         //승률이 45~49%
+    const oddML="방심만 하지 않는다면 <br>무난하게 이길 수 있습니다.";                                                              //승률이 42~44%
+    const oddLow="솔직히 만만한 상대입니다. <br>패배 시 자신을 되돌아보세요.";                                                 //승률이 41%이하
     let html= "";
-    let soloQueueType="RANKED_SOLO_5x5";         // 큐타입
+    let soloQueueType="RANKED_SOLO_5x5";            // 큐타입
     let myInfo="";                                                            //전체적인 랭크정보 (솔랭,팀랭)
     let tier="";                                                                   //자신의 티어
     let point="";                                                                //리그 포인트
@@ -110,7 +110,7 @@ function  RankInfo(data){
                                         '</div>'+
                                 '</div>';
             $("#userRankInfo").append(html);
-            return
+            return          // for 문 탈출
         }
     }
     return status;
@@ -172,7 +172,7 @@ function lineInfo(data){
       else if(line=="Bot") line="원딜";
       else if(line=="Support") line="서포터";
       else line="올 라운더";
-       //여기부터 개발 시작
+
        if(tag=="assassin")                role="암살자";
        else if(tag=="mage")             role="마법사";
        else if(tag=="tank")               role="탱커";
