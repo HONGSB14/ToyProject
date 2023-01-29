@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-c996af84-5758-4188-abcf-4921b909b2b0";
+        String api_key="RGAPI-3ef83f4f-7461-4feb-8e5d-670d1ead9c5d";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -69,7 +69,7 @@ public class UserService {
             String myId="";
             String puuId="";
             //입력값 공백 제거
-            String reMyName=myName.replace(" ","%20")+"?";          // %20 은 공백을 설정한 값을 뜻한다
+            String reMyName=myName.replace(" ","%20")+"?";          // %20 은 공백을 설정한 값을 뜻한다.
             //해당 API URL
             String userInfoURL="https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
             //getAPI 메소드를 통해 API값 가져오기 (나)
@@ -85,8 +85,8 @@ public class UserService {
                 jsonArray.add(myInfoValue);                                                    //유저정보
                 jsonArray.add(gameInfo(myId));                                              //랭크정보
                 jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-//               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+//                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -207,8 +207,8 @@ public class UserService {
                     }
                 }
            }
-           return ja;
-//           return matchValue;
+//           return ja;
+           return matchValue;
         }
         return ja;
     }
