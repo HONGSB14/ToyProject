@@ -92,7 +92,7 @@ function  RankInfo(data){
             html+= '<div class="col-md-12 row">'+
                                 '<h2><strong>Rank Info</strong></h2>'+
                                 '<div class="col-md-3">'+
-                                    '<h5 class="offset-1"><img src="../img/rank_icon/Emblem_'+tier.split(" ")[0]+'.gif" style="width:85px; height:85px; border-radius:70%;"></h5>'+
+                                    '<h5 class="offset-1"><img class="img-fluid"  src="../img/rank_icon/Emblem_'+tier.split(" ")[0]+'.gif" style="width:85px; height:85px; border-radius:70%;"></h5>'+
                                 '</div>'+
                                 '<div class="col-md-5 p-3">'+
                                      '<h4><strong>'+tier+'</strong></h4>'+
@@ -136,7 +136,7 @@ function MostChampion(data){
         champName_kr=champions[i].name;
          html+='<div class="col-md-12 row">'+
                             '<div class="col-md-2 p-1">'+
-                                     '<img src="../img/champion/'+champName+'.png"  width="50px" height="50px" style="border-radius: 100%;">'+
+                                     '<img class="img-fluid"  src="../img/champion/'+champName+'.png"  width="50px" height="50px" style="border-radius: 100%;">'+
                             '</div>'+
                             '<div class="col-md-4 p-1">'+
                                     '<h5><i>'+champName_kr+'</i></h5>'+
@@ -187,7 +187,7 @@ function lineInfo(data){
                     '</div>'+
                     '<div class="row">'+
                         '<div class="offset-6 col-md-1 px-5">'+
-                            '<img src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="35px" height="35px">'+
+                            '<img class="img-fluid"  src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="35px" height="35px">'+
                         '</div>'+
                         '<div class="col-md-5">'+
                             '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
