@@ -7,6 +7,7 @@ $(function() {
 function idInput() {
     let html="";
     let status="error";       //error 발생
+    let line="";                   // 주 라인
     pageClear();
     $("#loading").show();
     $.ajax({
@@ -19,7 +20,8 @@ function idInput() {
                             if(RankInfo(data)!=status){
                                 userInfo(data);
                                 MostChampion(data);
-                                lineInfo(data);
+                                line=lineAndRole(data);
+                                if(line=="Top") totalDamage(data);
                                 $("#loading").hide();   //스피너 숨기기
                             }else{
                                 outPutGameErr();
@@ -53,7 +55,7 @@ function  RankInfo(data){
     const oddMU="평타이상 칩니다.<br> 절대 방심하지마세요.";                                                                             //승률이 50~55%
     const oddMiddle="나사가 하나 빠졌습니다. <br>빠르게 파악 후<br> 나사빠진 부분을 공략해야합니다.";         //승률이 45~49%
     const oddML="방심만 하지 않는다면 <br>무난하게 이길 수 있습니다.";                                                              //승률이 42~44%
-    const oddLow="솔직히 만만한 상대입니다. <br>패배 시 자신을 되돌아보세요.";                                                 //승률이 41%이하
+    const oddLow="만만한 상대입니다. <br>패배 시 자신을 되돌아보세요.";                                                            //승률이 41%이하
     let html= "";
     let soloQueueType="RANKED_SOLO_5x5";            // 큐타입
     let myInfo="";                                                            //전체적인 랭크정보 (솔랭,팀랭)
@@ -150,9 +152,9 @@ function MostChampion(data){
 
 
 /**
-* @todo 유저의 주 라인을 나타낸다.
+* @todo 유저의 주 라인과 자주쓴 역할군을 나타낸다.
 */
-function lineInfo(data){
+function lineAndRole(data){
 
       let line=data[3].lane;
       let tag=data[3].champRole;
@@ -187,7 +189,7 @@ function lineInfo(data){
                     '</div>'+
                     '<div class="row">'+
                         '<div class="offset-6 col-md-1 px-5">'+
-                            '<img class="img-fluid"  src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="35px" height="35px">'+
+                            '<img  src="../img/rank_position/Position_'+tier+'-'+lane+'.png" width="35px" height="35px">'+
                         '</div>'+
                         '<div class="col-md-5">'+
                             '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
@@ -195,10 +197,15 @@ function lineInfo(data){
                         '</div>'+
                     '</div>';
       $("#matchDataInfo").append(html);
+      return lane;
 }
 
+function totalDamage(data) {
 
-
+    let html="";
+    html+= '<canvas id="totalDamageChart" width="400" height="400"></canvas>';
+    $("#chart_1").append(html);
+}
 
 
 

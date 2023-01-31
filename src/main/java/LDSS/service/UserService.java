@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-3ef83f4f-7461-4feb-8e5d-670d1ead9c5d";
+        String api_key="RGAPI-99317b75-71fb-4aab-9509-8952aa037063";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -85,8 +85,8 @@ public class UserService {
                 jsonArray.add(myInfoValue);                                                    //유저정보
                 jsonArray.add(gameInfo(myId));                                              //랭크정보
                 jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-//                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+//               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+                jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
             }else{
                 return null;
             }
@@ -199,16 +199,18 @@ public class UserService {
 
                             String lane = (String) member.get("teamPosition");                                                            //1. 검색한 아이디의 라인
                             String chmpionName=(String)member.get("championName");                                      //2. 검색한 아이디의 챔피언
-
-                            jo.put("lane",lane);                                                                                                                      //데이터 가공값에 넣기 1.라인
+                            int totalDamage=Integer.parseInt(String.valueOf(member.get("totalDamageDealtToChampions")));
+                            //데이터 가공값에 넣기
+                            jo.put("lane",lane);                                                                                                                    //1.라인
                             jo.put("chmpionName",chmpionName);                                                                               //2.챔피언 이름
-                            ja.add(jo);                                                                                                                                     //리턴값에 넣기
+                            jo.put("totalDamages",totalDamage);                                                                                      //3. 토탈데미지
+                            ja.add(jo);                                                                                                                                   //리턴값에 넣기
                         }
                     }
                 }
            }
-//           return ja;
-           return matchValue;
+           return ja;
+//           return matchValue;
         }
         return ja;
     }
@@ -222,19 +224,36 @@ public class UserService {
         JSONObject jsonObject = new JSONObject();
         ArrayList<String> lane =new ArrayList<>();
         ArrayList<String> ChampName=new ArrayList<>();
+        ArrayList<Integer> totalDamages= new ArrayList<>();
         int i =0;
+        int totalDamage=0;
         String line ="";
         String champRole="";
+
         //공용  데이터에 담기
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             lane.add((String)userGameInfo.get("lane"));
             ChampName.add((String)userGameInfo.get("chmpionName"));
+
         }
+
         line=userLane(lane);
         champRole=getRole(ChampName);
-        jsonObject.put("lane", line);  //주 라인
-        jsonObject.put("champRole", champRole);
+        String mainLine="";
+        //딜량 구하기 *서포터 제외
+        if(line!="Support") {
+            for (i = 0; i < getMatchInfo.size(); i++) {
+                JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
+                    mainLine=(String)userGameInfo.get("lane");                                          //해당 라인 구하기
+                    if(mainLine.equals(line.toUpperCase())){                                                //해당 라인과 주라인에 대한 계산값 구하기
+                        totalDamages.add((Integer)userGameInfo.get("totalDamages"));
+                    }
+            }
+        }
+        jsonObject.put("lane", line);                               //주 라인
+        jsonObject.put("champRole", champRole);      //주요역할군
+        jsonObject.put("totalDamege",totalDamages); //토탈 대미지 ( 챔피언에게 가한 데미지)
         return jsonObject;
     }
 
@@ -344,11 +363,8 @@ public class UserService {
         }
         if(marksMan>= roleGame){
             mainRole="marksMan";
-            roleGame=marksMan;
         }
         return mainRole;
     }
-
-
 }
 
