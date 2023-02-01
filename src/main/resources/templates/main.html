@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>나를 위한 전적 검색 프로그램</title>
@@ -44,16 +44,13 @@
                     <!--모스트 챔피언-->
                     <div class="col-md-6" id="mostChamp"></div>
                     <!--매치 데이터 조회창 -->
-                    <div class="col-md-12" id="matchDataInfo">
-                        <div class="col-md-12" id="lineInfo"></div>
-                        <!--총 데미지차트-->
-                        <div class="col-md-6" id="chart_1"></div>
-                    </div>
+                    <div class="col-md-12" id="matchDataInfo"></div>
+                    <!--차트-->
+                    <div class="col-md-12" id="charts"></div>
                 </div>
             </div>
         </div>
-
-    <script type="text/javascript" src="../js/main.js"></script>
     <div th:replace="footer.html"></div>
+    <script type="text/javascript" src="../js/main.js"></script>
 </body>
 </html>

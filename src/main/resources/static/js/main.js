@@ -7,7 +7,7 @@ $(function() {
 function idInput() {
     let html="";
     let status="error";       //error 발생
-    let line="";                   // 주 라인
+    let line="";                    // 주 라인
     pageClear();
     $("#loading").show();
     $.ajax({
@@ -20,8 +20,8 @@ function idInput() {
                             if(RankInfo(data)!=status){
                                 userInfo(data);
                                 MostChampion(data);
-                                line=lineAndRole(data);
-                                if(line=="Top") totalDamage(data);
+                                lineAndRole(data);
+                                totalDamage(data);
                                 $("#loading").hide();   //스피너 숨기기
                             }else{
                                 outPutGameErr();
@@ -158,7 +158,7 @@ function lineAndRole(data){
 
       let line=data[3].lane;
       let tag=data[3].champRole;
-      let lane=line;
+      let lane="";
       let role=tag;
       let myInfo=data[1].myInfo;
       let tier="";
@@ -168,12 +168,29 @@ function lineAndRole(data){
                     tier=myInfo[i].tier;
               }
       }
-      if(line=="Top") line="탑";
-      else if(line=="Jungle") line="정글";
-      else if(line=="Mid") line="미드";
-      else if(line=="Bot") line="원딜";
-      else if(line=="Support") line="서포터";
-      else line="올 라운더";
+      if(line=="TOP") {
+            line="탑";
+            lane="Top";
+      }
+      else if(line=="JUNGLE"){
+            line="정글";
+            lane="Jungle";
+      }
+      else if(line=="MIDDLE") {
+            line="미드";
+            lane="Mid";
+      }
+      else if(line=="BOTTOM") {
+            line="원딜";
+            lane="Bot";
+      }
+      else if(line=="SUPPORT"){
+            line="서포터";
+            lane="Support";
+      }
+      else {
+            line="올 라운더";
+      }
 
        if(tag=="assassin")                role="암살자";
        else if(tag=="mage")             role="마법사";
@@ -201,11 +218,33 @@ function lineAndRole(data){
 }
 
 function totalDamage(data) {
-
     let html="";
-    html+= '<canvas id="totalDamageChart" width="400" height="400"></canvas>';
-    $("#chart_1").append(html);
+    html   +=
+                      '<div class="col-md-5" id="chart_1">' +
+                          '<canvas id="totalDamageChart" width="100" height="100"></canvas>' +
+                      '<div>';
+    $("#charts").append(html);
+    const ctx=document.getElementById('totalDamageChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
 }
+
 
 
 
@@ -272,4 +311,5 @@ function pageClear(){
       $("#mainStatusInfo").empty();
       $("#mostChamp").empty();
       $("#matchDataInfo").empty();
+      $("#charts").empty();
 }
