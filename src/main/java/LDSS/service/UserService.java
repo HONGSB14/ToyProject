@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-179bd62c-bb22-4d91-9318-f9e805a1955a";
+        String api_key="RGAPI-791cb025-819b-4d15-a4fd-dda358b7b56d";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -262,7 +262,7 @@ public class UserService {
         }
         jsonObject.put("lane", line);                                     //주 라인
         jsonObject.put("champRole", champRole);          //주요역할군
-        jsonObject.put("totalDamege",totalDamages);   //토탈 대미지 ( 챔피언에게 가한 데미지)
+        jsonObject.put("totalDamage",totalDamages);   //토탈 대미지 ( 챔피언에게 가한 데미지)
         return jsonObject;
     }
 

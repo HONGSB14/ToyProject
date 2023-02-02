@@ -20,7 +20,8 @@ function idInput() {
                             if(RankInfo(data)!=status){
                                 userInfo(data);
                                 MostChampion(data);
-                                lineAndRole(data);
+                                line=lineAndRole(data);
+                                console.log(line);
                                 totalDamage(data);
                                 $("#loading").hide();   //스피너 숨기기
                             }else{
@@ -150,7 +151,6 @@ function MostChampion(data){
     $("#mostChamp").append(html);
 }
 
-
 /**
 * @todo 유저의 주 라인과 자주쓴 역할군을 나타낸다.
 */
@@ -218,20 +218,43 @@ function lineAndRole(data){
 }
 
 function totalDamage(data) {
+    let totalDamages=[];
+    let labels=[];
+    let reg=/\B(?=(\d{3})+(?!\d))/g;
+    let lane="";
     let html="";
-    html   +=
-                      '<div class="col-md-5" id="chart_1">' +
-                          '<canvas id="totalDamageChart" width="100" height="100"></canvas>' +
-                      '<div>';
+    let lowDamage=0;
+    let upperDamage=0;
+    lane=data[3].lane;
+    totalDamages=data[3].totalDamage;
+    upperDamage=totalDamages[0];
+    lowDamage=totalDamages[0];
+    for(let i=0; i<totalDamages.length; i++){
+        if(totalDamages[i]>upperDamage){
+            upperDamage=totalDamages[i];
+        }
+        if(totalDamages[i]<lowDamage){
+            lowDamage=totalDamages[i];
+        }
+        let number=i+1;
+        labels[i]=String(number)+' Game';
+    }
+    html+=
+                   '<div class="col-md-6" id="chart_1">' +
+                       '<h5><i>1. 해당 라인 경기당 총 데미지 그래프</i></h5><br>'+
+                       '<h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
+                       '<h6>가장 낮은 데미지 : '+lowDamage.toString().replace(reg, ',')+'</h6>'+
+                       '<canvas id="totalDamageChart"></canvas>' +
+                   '<div>';
     $("#charts").append(html);
     const ctx=document.getElementById('totalDamageChart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: labels,
           datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
+            label: totalDamages.length+' game totalDamage',
+            data: totalDamages,
             borderWidth: 1
           }]
         },
