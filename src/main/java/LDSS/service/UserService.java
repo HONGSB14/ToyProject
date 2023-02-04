@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-791cb025-819b-4d15-a4fd-dda358b7b56d";
+        String api_key="RGAPI-eefeec95-610c-420f-b9f3-18af2020814b";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -236,9 +236,9 @@ public class UserService {
         ArrayList<String> ChampName=new ArrayList<>();
         ArrayList<Integer> totalDamages= new ArrayList<>();
         int i =0;
+        int dataOutputGame=0;
         String line ="";
         String champRole="";
-
         //공용  데이터에 담기
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
@@ -253,16 +253,19 @@ public class UserService {
         if(line!="Support") {
             for (i = 0; i < getMatchInfo.size(); i++) {
                 JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
-                    mainLine=(String)userGameInfo.get("lane");                                          //해당 라인 구하기
+                    mainLine=(String)userGameInfo.get("lane");                                                 //해당 라인 구하기
 
-                    if(mainLine.equals(line)){                                                //해당 라인과 주라인에 대한 계산값 구하기
+                    if(mainLine.equals(line)){                                                                                  //해당 라인과 주라인에 대한 계산값 구하기
                         totalDamages.add((Integer)userGameInfo.get("totalDamages"));
+                        dataOutputGame+=1;                                                                                      //데이터 추출 게임판수 구하기
                     }
+
             }
         }
-        jsonObject.put("lane", line);                                     //주 라인
-        jsonObject.put("champRole", champRole);          //주요역할군
-        jsonObject.put("totalDamage",totalDamages);   //토탈 대미지 ( 챔피언에게 가한 데미지)
+        jsonObject.put("lane", line);                                                          //주 라인
+        jsonObject.put("champRole", champRole);                               //주요역할군
+        jsonObject.put("dataOutputGame",dataOutputGame);          //데이터추출 게임판수
+        jsonObject.put("totalDamage",totalDamages);                         //토탈 대미지 ( 챔피언에게 가한 데미지)
         return jsonObject;
     }
 

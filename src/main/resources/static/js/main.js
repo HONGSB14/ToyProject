@@ -7,7 +7,7 @@ $(function() {
 function idInput() {
     let html="";
     let status="error";       //error 발생
-    let line="";                    // 주 라인
+    let lane="";                    // 주 라인
     pageClear();
     $("#loading").show();
     $.ajax({
@@ -18,12 +18,23 @@ function idInput() {
                     console.log(data);
                     if(data!=false){
                             if(RankInfo(data)!=status){
+                                $("#loading").hide();   //스피너 숨기기
                                 userInfo(data);
                                 MostChampion(data);
-                                line=lineAndRole(data);
-                                console.log(line);
-                                totalDamage(data);
-                                $("#loading").hide();   //스피너 숨기기
+                                lane=lineAndRole(data);
+                                if(lane == "Top"){
+                                     totalDamage(data);
+                                }else if (lane == "Jungle"){
+                                     totalDamage(data);
+                                }else if (lane =="Mid") {
+                                     totalDamage(data);
+                                }else if (lane == "Bot"){
+                                     totalDamage(data);
+                                }else if (lane == "Support"){
+                                    console.log("서폿");
+                                }else {
+                                    outPutErr();
+                                }
                             }else{
                                 outPutGameErr();
                             }
@@ -225,6 +236,8 @@ function totalDamage(data) {
     let html="";
     let lowDamage=0;
     let upperDamage=0;
+    let deals=0;
+    let dataOutputGame=data[3].dataOutputGame;
     lane=data[3].lane;
     totalDamages=data[3].totalDamage;
     upperDamage=totalDamages[0];
@@ -236,12 +249,16 @@ function totalDamage(data) {
         if(totalDamages[i]<lowDamage){
             lowDamage=totalDamages[i];
         }
+        deals+=totalDamages[i];
         let number=i+1;
         labels[i]=String(number)+' Game';
     }
+    let dps= deals/totalDamages.length;
     html+=
-                   '<div class="col-md-6" id="chart_1">' +
+                   '<div class="col-md-6 my-5" id="chart_1">' +
                        '<h5><i>1. 해당 라인 경기당 총 데미지 그래프</i></h5><br>'+
+                       '<h6>해당라인 진행 게임 횟수: '+dataOutputGame+' Game</h6>'+
+                       '<h6>평균 DPS : '+(Math.round(dps)).toString().replace(reg,',')+' </h6><br>'+
                        '<h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
                        '<h6>가장 낮은 데미지 : '+lowDamage.toString().replace(reg, ',')+'</h6>'+
                        '<canvas id="totalDamageChart"></canvas>' +
