@@ -23,17 +23,18 @@ function idInput() {
                                 MostChampion(data);
                                 lane=lineAndRole(data);
                                 if(lane == "Top"){
-                                     totalDamage(data);
+                                     totalDamageChart(data);
                                 }else if (lane == "Jungle"){
-                                     totalDamage(data);
+                                     totalDamageChart(data);
+                                     wardChart(data);
                                 }else if (lane =="Mid") {
-                                     totalDamage(data);
+                                     totalDamageChart(data);
                                 }else if (lane == "Bot"){
-                                     totalDamage(data);
+                                     totalDamageChart(data);
                                 }else if (lane == "Support"){
-                                    console.log("서폿");
+                                   wardChartChart(data);
                                 }else {
-                                    outPutErr();
+                                   outPutGameErr();
                                 }
                             }else{
                                 outPutGameErr();
@@ -227,18 +228,18 @@ function lineAndRole(data){
       $("#matchDataInfo").append(html);
       return lane;
 }
-
-function totalDamage(data) {
+/**
+* @Todo 총합데미지를 차트로 그려낸다. chartType : bar
+*/
+function totalDamageChart(data) {
     let totalDamages=[];
     let labels=[];
     let reg=/\B(?=(\d{3})+(?!\d))/g;
-    let lane="";
     let html="";
     let lowDamage=0;
     let upperDamage=0;
     let deals=0;
-    let dataOutputGame=data[3].dataOutputGame;
-    lane=data[3].lane;
+    let dataOutputGame=0;
     totalDamages=data[3].totalDamage;
     upperDamage=totalDamages[0];
     lowDamage=totalDamages[0];
@@ -250,16 +251,16 @@ function totalDamage(data) {
             lowDamage=totalDamages[i];
         }
         deals+=totalDamages[i];
-        let number=i+1;
-        labels[i]=String(number)+' Game';
+        dataOutputGame=i+1;
+        labels[i]=String(dataOutputGame)+' Game';
     }
     let dps= deals/totalDamages.length;
     html+=
                    '<div class="col-md-6 my-5" id="chart_1">' +
-                       '<h5><i>1. 해당 라인 경기당 총 데미지 그래프</i></h5><br>'+
+                       '<h5><i>해당 라인 경기당 총 데미지 그래프</i></h5><br>'+
                        '<h6>해당라인 진행 게임 횟수: '+dataOutputGame+' Game</h6>'+
-                       '<h6>평균 DPS : '+(Math.round(dps)).toString().replace(reg,',')+' </h6><br>'+
-                       '<h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
+                       '<h6>평균 DPS : '+(Math.round(dps)).toString().replace(reg,',')+' </h6>'+
+                       '<br><h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
                        '<h6>가장 낮은 데미지 : '+lowDamage.toString().replace(reg, ',')+'</h6>'+
                        '<canvas id="totalDamageChart"></canvas>' +
                    '<div>';
@@ -284,7 +285,62 @@ function totalDamage(data) {
         }
       });
 }
+/**
+*   @Todo 총 와드 설치 개수를 차트로 나타낸다. Type : bar
+*/
+function wardChart(data){
+        let wardPlaced = [];
+        let wardKilled= [] ;
+        let labels = [];
+        let i=0;
+        let wardPlacedAvg=0;
+        let wardKilledAvg=0;
+        let dataOutputGame=0;
+        let html="";
+        //해당 데이터로 초기화
+        wardPlaced=data[3].wardPlaced;
+        wardKilled= data[3].wardKilled;
 
+        for (i =0; i<wardPlaced.length; i++){
+            dataOutputGame=i+1;
+            labels[i]=String(dataOutputGame)+" Game";
+            wardPlacedAvg+=wardPlaced[i];
+            wardKilledAvg+=wardKilled[i];
+        }
+        wardPlacedAvg=wardPlacedAvg/wardPlaced.length;
+        wardKilledAvg=wardKilledAvg/wardKilled.length;
+        html+=
+                        '<div class="col-md-6 my-5">'+
+                            '<h5><i>해당 라인 와드  설치 및 삭제 그래프</i></h5>'+
+                            '<h6>평균 와드 설치 개수 : '+Math.round(wardPlacedAvg,1)+' 개</h6>'+
+                            '<h6>평균 와드 삭제 개수 : '+Math.round(wardKilledAvg,1)+' 개</h6>'+
+                            '<canvas id="wardPlacedChart"></canvas>'+
+                        '<div>';
+        $("#charts").append(html);
+        const ctx=document.getElementById('wardPlacedChart').getContext('2d');
+        new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                  datasets: [{
+                    label: wardPlaced.length+' game totalWardPlaced',
+                    data:  wardPlaced,
+                    borderWidth: 1
+                  },{
+                         label: wardKilled.length+' game totalWardKilled',
+                         data:  wardKilled,
+                         borderWidth: 1
+                  }]
+                },
+                options: {
+                  scales: {
+                    y: {
+                      beginAtZero: true
+                    }
+                  }
+                }
+              });
+}
 
 
 
