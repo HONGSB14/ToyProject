@@ -32,9 +32,7 @@ function idInput() {
                                 }else if (lane == "Bot"){
                                      totalDamageChart(data);
                                 }else if (lane == "Support"){
-                                   wardChartChart(data);
-                                }else {
-                                   outPutGameErr();
+                                   wardChart(data);
                                 }
                             }else{
                                 outPutGameErr();
@@ -196,7 +194,7 @@ function lineAndRole(data){
             line="원딜";
             lane="Bot";
       }
-      else if(line=="SUPPORT"){
+      else if(line=="UTILITY"){
             line="서포터";
             lane="Support";
       }
@@ -291,27 +289,33 @@ function totalDamageChart(data) {
 function wardChart(data){
         let wardPlaced = [];
         let wardKilled= [] ;
+        let visionScore = [] ;
         let labels = [];
         let i=0;
         let wardPlacedAvg=0;
         let wardKilledAvg=0;
+        let visionScoreAvg=0;
         let dataOutputGame=0;
         let html="";
         //해당 데이터로 초기화
-        wardPlaced=data[3].wardPlaced;
-        wardKilled= data[3].wardKilled;
+        wardPlaced=data[3].wardInfo.wardPlaced;
+        wardKilled= data[3].wardInfo.wardKilled;
+        visionScore=data[3].wardInfo.visionScore;
 
         for (i =0; i<wardPlaced.length; i++){
             dataOutputGame=i+1;
             labels[i]=String(dataOutputGame)+" Game";
             wardPlacedAvg+=wardPlaced[i];
             wardKilledAvg+=wardKilled[i];
+            visionScoreAvg+=visionScore[i];
         }
         wardPlacedAvg=wardPlacedAvg/wardPlaced.length;
         wardKilledAvg=wardKilledAvg/wardKilled.length;
+        visionScoreAvg=visionScoreAvg/visionScore.length;
         html+=
                         '<div class="col-md-6 my-5">'+
-                            '<h5><i>해당 라인 와드  설치 및 삭제 그래프</i></h5>'+
+                            '<br><h5><i>해당 라인 와드  설치 및 삭제 그래프</i></h5>'+
+                            '<h6>평균 시야 점수 : '+Math.round(visionScoreAvg,1)+'</h6>'+
                             '<h6>평균 와드 설치 개수 : '+Math.round(wardPlacedAvg,1)+' 개</h6>'+
                             '<h6>평균 와드 삭제 개수 : '+Math.round(wardKilledAvg,1)+' 개</h6>'+
                             '<canvas id="wardPlacedChart"></canvas>'+
@@ -319,17 +323,23 @@ function wardChart(data){
         $("#charts").append(html);
         const ctx=document.getElementById('wardPlacedChart').getContext('2d');
         new Chart(ctx, {
-                type: 'bar',
                 data: {
                     labels: labels,
                   datasets: [{
-                    label: wardPlaced.length+' game totalWardPlaced',
+                     type: 'bar',
+                    label: '와드 설치개수',
                     data:  wardPlaced,
                     borderWidth: 1
                   },{
-                         label: wardKilled.length+' game totalWardKilled',
+                         type: 'bar',
+                         label: '와드 삭제개수',
                          data:  wardKilled,
                          borderWidth: 1
+                  },{
+                        type: 'line',
+                        label:'시야점수',
+                        data: visionScore,
+                        borderWidth: 1
                   }]
                 },
                 options: {

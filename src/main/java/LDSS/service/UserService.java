@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-a3ee42a1-f89e-471b-87aa-0263fb9d5cef";
+        String api_key="RGAPI-a842161a-a1da-424e-963d-1af5aa8aaa2d";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -86,8 +86,8 @@ public class UserService {
                     jsonArray.add(myInfoValue);                                                    //유저정보
                     jsonArray.add(gameInfo(myId));                                              //랭크정보
                     jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-//               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+//                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
                 }else{
                     return null;
                 }
@@ -204,24 +204,28 @@ public class UserService {
                         for (int j=0; j<participants.size(); j++) {                                                                                                                                 //각각의 매치경기 수 만큼
                             JSONObject member = (JSONObject) participants.get(j);                                                                                              //매치에 참여한 유저들 중에
                             if (member.get("puuid").equals(puuId)) {                                                                                                                        // 유저가 검색한 아이디 찾기
+
+
                                 String lane = (String) member.get("teamPosition");                                                                                                   //1. 검색한 아이디의 라인
                                 String championName=(String)member.get("championName");                                                                           //2. 검색한 아이디의 챔피언
                                 int totalDamage=Integer.parseInt(String.valueOf(member.get("totalDamageDealtToChampions")));           //3. 검색한 아이디의 데미지 총량
                                 int wardPlaced=Integer.parseInt(String.valueOf(member.get("wardsPlaced")));                                                //4. 검색한 아이디의 와드 설치 개수
                                 int wardsKilled=Integer.parseInt(String.valueOf(member.get("wardsKilled")));                                                  //5. 검색한 아이디의 와드 삭제 개수
+                                int visionScore=Integer.parseInt(String.valueOf(member.get("visionScore")));                                                   //6. 검색한 아이디의 시야점수
                                 //데이터 가공값에 넣기
                                 jo.put("lane",lane);                                                                                                                       //1.라인
                                 jo.put("championName",championName);                                                                            //2.챔피언 이름
                                 jo.put("totalDamages",totalDamage);                                                                                      //3. 토탈데미지
                                 jo.put("wardsPlaced",wardPlaced);                                                                                          //4. 와드 설치 개수
                                 jo.put("wardsKilled",wardsKilled);                                                                                           //5. 와드 삭제 개수
+                                jo.put("visionScore",visionScore);                                                                                            //6. 시야 점수
                                 ja.add(jo);                                                                                                                                       //리턴값에 넣기
                             }
                         }
                     }
                }
-               return ja;
-     //           return matchValue;
+     //         return ja;
+                return matchValue;
             }
         }catch (Exception e){
             System.err.println("Error = " + e);
@@ -239,8 +243,7 @@ public class UserService {
         ArrayList<String> lane =new ArrayList<>();
         ArrayList<String> ChampName=new ArrayList<>();
         ArrayList<Integer> totalDamages= new ArrayList<>();
-        ArrayList<Integer>  wardPlaceds=new ArrayList<>();
-        ArrayList<Integer> wardKilled = new ArrayList<>();
+        HashMap<String,ArrayList<Integer>> wardInfo =new HashMap<>();
         int i =0;
         String line ="";
         String champRole="";
@@ -248,22 +251,20 @@ public class UserService {
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             lane.add((String)userGameInfo.get("lane"));
-            ChampName.add((String)userGameInfo.get("chmpionName"));
+            ChampName.add((String)userGameInfo.get("championName"));
         }
 
         line=userLane(lane);
         champRole=getRole(ChampName);
         totalDamages=getTotalDamage(getMatchInfo,line);
-        wardPlaceds=getWardPlaced(getMatchInfo,line);
-        wardKilled=getWardKilled(getMatchInfo,line);
+        wardInfo=getWardInfo(getMatchInfo,line);
 
 
 
         jsonObject.put("lane", line);                                                          //주 라인
         jsonObject.put("champRole", champRole);                               //주요역할군
         jsonObject.put("totalDamage",totalDamages);                         //토탈 대미지 ( 챔피언에게 가한 데미지)
-        jsonObject.put("wardPlaced", wardPlaceds);                           //와드 설치 개수
-        jsonObject.put("wardKilled",wardKilled);                                //와드 삭제 개수
+        jsonObject.put("wardInfo", wardInfo);                                      //와드 정보
         return jsonObject;
     }
 
@@ -301,7 +302,7 @@ public class UserService {
         }
         if(support>=mainLineGame){
             mainLineGame=support;
-            mainLine="SUPPORT";
+            mainLine="UTILITY";
         }
         return mainLine;
     }
@@ -399,45 +400,30 @@ public class UserService {
     }
 
     /**
-     * @Todo 와드 설치 개수를 구한다.
+     * @Todo 와드 정보를 구한다.
      */
-    public  ArrayList<Integer> getWardPlaced(JSONArray getMatchInfo,String line){
+    public  HashMap<String,ArrayList<Integer>> getWardInfo(JSONArray getMatchInfo,String line){
         ArrayList<Integer> wardPlaced= new ArrayList<>();
+        ArrayList<Integer> wardKilled= new ArrayList<>();
+        ArrayList<Integer> visionScore = new ArrayList<>();
+        HashMap<String,ArrayList<Integer>> wardInfo=new HashMap<>();
         int i=0;
         String mainLine="";
         for (i = 0; i < getMatchInfo.size(); i++) {
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             mainLine = (String) userGameInfo.get("lane");                                            //해당 라인 구하기
-            if (mainLine.equals("UTILITY")) {
-                mainLine = "SUPPORT";
-            }
+
             if (mainLine.equals(line)) {                                                                             //해당 라인과 주라인에 대한 계산값 구하기
                 // ex) 주라인이 탑이라면 탑을 한 경기만 가져온다.
                 wardPlaced.add((Integer) userGameInfo.get("wardsPlaced"));        //해당 라인에서 진행한 와드 설치 개수를 가져온다.
+                wardKilled.add((Integer) userGameInfo.get("wardsKilled"));         //해당 라인에서 진행한 와드 삭제 개수를 가져온다.
+                visionScore.add((Integer) userGameInfo.get("visionScore"));         //해당 라인에서 진행한 시야 점수 를 가져온다.
             }
         }
-        return wardPlaced;
-    }
-
-    /**
-     * @Todo 와드 삭제 개수를 구한다.
-     */
-    public  ArrayList<Integer> getWardKilled(JSONArray getMatchInfo,String line){
-        ArrayList<Integer> wardKilled= new ArrayList<>();
-        int i=0;
-        String mainLine="";
-        for (i = 0; i < getMatchInfo.size(); i++) {
-            JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
-            mainLine = (String) userGameInfo.get("lane");                                            //해당 라인 구하기
-            if (mainLine.equals("UTILITY")) {
-                mainLine = "SUPPORT";
-            }
-            if (mainLine.equals(line)) {                                                                             //해당 라인과 주라인에 대한 계산값 구하기
-                // ex) 주라인이 탑이라면 탑을 한 경기만 가져온다.
-                wardKilled.add((Integer) userGameInfo.get("wardsKilled"));        //해당 라인에서 진행한 와드 삭제 개수를 가져온다.
-            }
-        }
-        return wardKilled;
+        wardInfo.put("wardPlaced",wardPlaced);
+        wardInfo.put("wardKilled",wardKilled);
+        wardInfo.put("visionScore",visionScore);
+        return wardInfo;
     }
 }
 
