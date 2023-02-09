@@ -30,6 +30,7 @@ function idInput() {
                                      minionKilledChart(data);
                                      wardChart(data);
                                 }else if (lane =="Mid") {
+                                      championChart(data);
                                      totalDamageChart(data);
                                      minionKilledChart(data);
                                 }else if (lane == "Bot"){
@@ -229,6 +230,42 @@ function lineAndRole(data){
                     '</div>';
       $("#matchDataInfo").append(html);
       return lane;
+}
+
+/**
+* @Todo 챔프를 차트로 그려낸다. chartType : pie
+*/
+function championChart(data){
+    let champName=[];
+    let kda=[];
+    let labels=[];
+    let championName=[];
+    let championGame=[];
+    let html="";
+    let dataOutputGame=0;
+    champName=data[3].getGameChampName;
+    championName=Object.keys(champName);
+    championGame=Object.values(champName);
+    console.log(championName);
+    console.log(championGame);
+    html+=
+                    '<div class="col-md-6 my-5">' +
+                        '<canvas id="champNameChart"></canvas>' +
+                    '</div>';
+    $("#charts").append(html);
+
+    const ctx=document.getElementById('champNameChart').getContext('2d');
+    new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: championName,
+              datasets: [{
+                label:"챔피언 판 수",
+                data:championGame,
+                hoverOffset: 4
+              }]
+            }
+          });
 }
 /**
 * @Todo 총합데미지를 차트로 그려낸다. chartType : bar
