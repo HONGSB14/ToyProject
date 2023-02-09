@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-a842161a-a1da-424e-963d-1af5aa8aaa2d";
+        String api_key="RGAPI-2cd390f3-44e7-419b-8aee-b02193d2a63a";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -86,14 +86,14 @@ public class UserService {
                     jsonArray.add(myInfoValue);                                                    //유저정보
                     jsonArray.add(gameInfo(myId));                                              //랭크정보
                     jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-               jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-//                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+//                    jsonArray.add(getMatchInfo(puuId));                                     //매치정보
+                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
                 }else{
                     return null;
                 }
                 return jsonArray;
             }catch (Exception e){
-                System.err.println("error = " + e);
+                System.err.println("userInfo Error = " + e);
             }
             return jsonArray;
     }
@@ -205,33 +205,39 @@ public class UserService {
                             JSONObject member = (JSONObject) participants.get(j);                                                                                              //매치에 참여한 유저들 중에
                             if (member.get("puuid").equals(puuId)) {                                                                                                                        // 유저가 검색한 아이디 찾기
                                 JSONObject challenges = (JSONObject) member.get("challenges");
-                                String lane = (String) member.get("teamPosition");                                                                                                              //1. 검색한 아이디의 라인
-                                String championName=(String)member.get("championName");                                                                                       //2. 검색한 아이디의 챔피언
-                                int totalDamage=Integer.parseInt(String.valueOf(member.get("totalDamageDealtToChampions")));                            //3. 검색한 아이디의 데미지 총량
-                                int wardPlaced=Integer.parseInt(String.valueOf(member.get("wardsPlaced")));                                                              //4. 검색한 아이디의 와드 설치 개수
-                                int wardsKilled=Integer.parseInt(String.valueOf(member.get("wardsKilled")));                                                               //5. 검색한 아이디의 와드 삭제 개수
-                                int visionScore=Integer.parseInt(String.valueOf(member.get("visionScore")));                                                                  //6. 검색한 아이디의 시야점수
-                                int  laneMinionsFirst10Minutes=Integer.parseInt(String.valueOf(challenges.get("laneMinionsFirst10Minutes")));     //7. 10분동안 미니언 처치 수
-                                int jungleCsBefore10Minutes=Integer.parseInt(String.valueOf(challenges.get("jungleCsBefore10Minutes")));           //8. 10분동안 정글 처치 수
-                                int damagePerMinute = Integer.parseInt(String.valueOf(challenges.get("damagePerMinute")));                                   //9. 분당 데미지
-                                int kda=Integer.parseInt(String.valueOf(challenges.get("kda")));                                                                                         //10. kda
+                                String lane = (String) member.get("teamPosition");                                                                                                                                      //1. 검색한 아이디의 라인
+                                String championName=(String)member.get("championName");                                                                                                               //2. 검색한 아이디의 챔피언
+                                int totalDamage=Integer.parseInt(String.valueOf(member.get("totalDamageDealtToChampions")));                                                    //3. 검색한 아이디의 데미지 총량
+                                int wardPlaced=Integer.parseInt(String.valueOf(member.get("wardsPlaced")));                                                                                      //4. 검색한 아이디의 와드 설치 개수
+                                int wardsKilled=Integer.parseInt(String.valueOf(member.get("wardsKilled")));                                                                                      //5. 검색한 아이디의 와드 삭제 개수
+                                int visionScore=Integer.parseInt(String.valueOf(member.get("visionScore")));                                                                                         //6. 검색한 아이디의 시야점수
+                                int  laneMinionsFirst10Minutes=Math.round(Float.parseFloat(String.valueOf(challenges.get("laneMinionsFirst10Minutes"))));     //7. 10분동안 미니언 처치 수
+                                int jungleCsBefore10Minutes=Math.round(Float.parseFloat(String.valueOf(challenges.get("jungleCsBefore10Minutes"))));            //8. 10분동안 정글 처치 수
+                                int totalMinionsKilled = Integer.parseInt(String.valueOf(member.get("totalMinionsKilled")));                                                              //9. 총 미니언 처치 수
+                                int neutralMinionsKilled = Integer.parseInt(String.valueOf(member.get("neutralMinionsKilled")));                                                   //10. 총 정글몹 처치 수
+//                                float damagePerMinute = Float.parseFloat(String.valueOf(challenges.get("damagePerMinute")));                                                     //11. 분당 데미지
+//                                float kda=Float.parseFloat(String.valueOf(challenges.get("kda")));                                                                                                           //12. kda
                                 //데이터 가공값에 넣기
-                                jo.put("lane",lane);                                                                                                                       //1.라인
+                                jo.put("lane",lane);                                                                                                                     //1.라인
                                 jo.put("championName",championName);                                                                            //2.챔피언 이름
-                                jo.put("totalDamages",totalDamage);                                                                                      //3. 토탈데미지
+                                jo.put("totalDamages",totalDamage);                                                                                       //3. 토탈데미지
                                 jo.put("wardsPlaced",wardPlaced);                                                                                          //4. 와드 설치 개수
-                                jo.put("wardsKilled",wardsKilled);                                                                                           //5. 와드 삭제 개수
+                                jo.put("wardsKilled",wardsKilled);                                                                                          //5. 와드 삭제 개수
                                 jo.put("visionScore",visionScore);                                                                                            //6. 시야 점수
+                                jo.put("laneMinionsFirst10Minutes",laneMinionsFirst10Minutes);                                    //7. 10분동안 미니언 처치 수
+                                jo.put("jungleCsBefore10Minutes",jungleCsBefore10Minutes);                                          //8. 10분동안 정글 처치 수
+                                jo.put("totalMinionsKilled", totalMinionsKilled);                                                                  //9. 게임 토탈 미니언 처치 수
+                                jo.put("neutralMinionsKilled",neutralMinionsKilled);                                                        //10.게임 토탈 정글 미니언 처치 수
                                 ja.add(jo);                                                                                                                                    //리턴값에 넣기
                             }
                         }
                     }
                }
-     //         return ja;
-                return matchValue;
+              return ja;
+    //            return matchValue;
             }
         }catch (Exception e){
-            System.err.println("Error = " + e);
+            System.err.println("getMatchInfo Error = " + e);
         }
         return ja;
     }
@@ -247,6 +253,7 @@ public class UserService {
         ArrayList<String> ChampName=new ArrayList<>();
         ArrayList<Integer> totalDamages= new ArrayList<>();
         HashMap<String,ArrayList<Integer>> wardInfo =new HashMap<>();
+        HashMap<String,ArrayList<Integer>> minionKilledInfo = new HashMap<>();
         int i =0;
         String line ="";
         String champRole="";
@@ -254,6 +261,7 @@ public class UserService {
         for(i=0; i<getMatchInfo.size(); i++){
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             lane.add((String)userGameInfo.get("lane"));
+            System.out.println((String)userGameInfo.get("lane"));
             ChampName.add((String)userGameInfo.get("championName"));
         }
 
@@ -261,13 +269,13 @@ public class UserService {
         champRole=getRole(ChampName);
         totalDamages=getTotalDamage(getMatchInfo,line);
         wardInfo=getWardInfo(getMatchInfo,line);
+        minionKilledInfo=getMinionsKilledInfo(getMatchInfo,line);
 
-
-
-        jsonObject.put("lane", line);                                                          //주 라인
+        jsonObject.put("lane", line);                                                        //주 라인
         jsonObject.put("champRole", champRole);                               //주요역할군
-        jsonObject.put("totalDamage",totalDamages);                         //토탈 대미지 ( 챔피언에게 가한 데미지)
+        jsonObject.put("totalDamage",totalDamages);                          //토탈 대미지 ( 챔피언에게 가한 데미지)
         jsonObject.put("wardInfo", wardInfo);                                      //와드 정보
+        jsonObject.put("minionKilledInfo",minionKilledInfo);           // 미니언 처치 수 정보
         return jsonObject;
     }
 
@@ -279,7 +287,7 @@ public class UserService {
     public String userLane(ArrayList<String> lane){
         int mainLineGame=0;     //주 포지션 게임 판 수
         String mainLine="";        // 주 포지션
-
+        System.out.println(lane.toString());
         int top=        Collections.frequency(lane,"TOP");
         int jungle=   Collections.frequency(lane,"JUNGLE");
         int mid=       Collections.frequency(lane,"MIDDLE");
@@ -413,9 +421,9 @@ public class UserService {
         ArrayList<Integer> wardKilled= new ArrayList<>();
         ArrayList<Integer> visionScore = new ArrayList<>();
         HashMap<String,ArrayList<Integer>> wardInfo=new HashMap<>();
-        int i=0;
         String mainLine="";
-        for (i = 0; i < getMatchInfo.size(); i++) {
+
+        for (int i = 0; i < getMatchInfo.size(); i++) {
             JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
             mainLine = (String) userGameInfo.get("lane");                                            //해당 라인 구하기
 
@@ -430,6 +438,44 @@ public class UserService {
         wardInfo.put("wardKilled",wardKilled);
         wardInfo.put("visionScore",visionScore);
         return wardInfo;
+    }
+
+    /**
+     * @Todo 미니언  처치 수를 구한다.
+     * @param getMatchInfo 매치정보
+     * @Param line 비교할 주 라인
+     * return ArrayList<Integer> 미니언 처치수
+     */
+    public HashMap<String,ArrayList<Integer>> getMinionsKilledInfo (JSONArray getMatchInfo,String line){
+
+        HashMap<String,ArrayList<Integer>> minionsKilledInfo = new HashMap<>();         // 미니언 처치 정보
+        ArrayList<Integer> minion10Minutes = new ArrayList<>();                                          // 10분 간 미니언  처치 수
+        ArrayList<Integer> jungle10Minutes = new ArrayList<>();                                            // 10분 간 정글 몬스터 처치 수
+        ArrayList<Integer> total10Minutes = new ArrayList<>();                                               // 10분 간 총 미니언 처치 수
+        ArrayList<Integer> totalMinionsKilled = new ArrayList<>();                                         // 총 미니언 처치 수
+        ArrayList<Integer> neutralMinionsKilled = new ArrayList<>();                                    // 총 정글몬스터 처치 수
+        ArrayList<Integer> gameTotalMinionKilled = new ArrayList<>();                                // 게임 총합 미니언 처치 수
+        String mainLine="";
+        for(int i =0 ; i<getMatchInfo.size(); i++){
+            JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
+            mainLine = (String) userGameInfo.get("lane");                                                           //해당 라인 구하기
+            if(mainLine.equals(line)){
+                minion10Minutes.add((Integer)userGameInfo.get("laneMinionsFirst10Minutes"));
+                jungle10Minutes.add((Integer)userGameInfo.get("jungleCsBefore10Minutes"));
+                total10Minutes.add((Integer)userGameInfo.get("jungleCsBefore10Minutes")+(Integer)userGameInfo.get("laneMinionsFirst10Minutes"));
+                totalMinionsKilled.add((Integer)userGameInfo.get("totalMinionsKilled"));
+                neutralMinionsKilled.add((Integer)userGameInfo.get("neutralMinionsKilled"));
+                gameTotalMinionKilled.add((Integer)userGameInfo.get("totalMinionsKilled")+(Integer)userGameInfo.get("neutralMinionsKilled"));
+            }
+        }
+
+        minionsKilledInfo.put("laneMinionsFirst10Minutes",minion10Minutes);
+        minionsKilledInfo.put("jungleCsBefore10Minutes",jungle10Minutes);
+        minionsKilledInfo.put("total10Minutes",total10Minutes);
+        minionsKilledInfo.put("totalMinionsKilled",totalMinionsKilled);
+        minionsKilledInfo.put("neutralMinionsKilled",neutralMinionsKilled);
+        minionsKilledInfo.put("gameTotalMinionKilled",gameTotalMinionKilled);
+        return  minionsKilledInfo;
     }
 }
 

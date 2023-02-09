@@ -24,13 +24,17 @@ function idInput() {
                                 lane=lineAndRole(data);
                                 if(lane == "Top"){
                                      totalDamageChart(data);
+                                     minionKilledChart(data);
                                 }else if (lane == "Jungle"){
                                      totalDamageChart(data);
+                                     minionKilledChart(data);
                                      wardChart(data);
                                 }else if (lane =="Mid") {
                                      totalDamageChart(data);
+                                     minionKilledChart(data);
                                 }else if (lane == "Bot"){
                                      totalDamageChart(data);
+                                     minionKilledChart(data);
                                 }else if (lane == "Support"){
                                    wardChart(data);
                                 }
@@ -255,7 +259,7 @@ function totalDamageChart(data) {
     let dps= deals/totalDamages.length;
     html+=
                    '<div class="col-md-6 my-5" id="chart_1">' +
-                       '<h5><i>해당 라인 경기당 총 데미지 그래프</i></h5><br>'+
+                       '<h5><i>경기당 총 데미지를 확인하세요. </i></h5><br>'+
                        '<h6>해당라인 진행 게임 횟수: '+dataOutputGame+' Game</h6>'+
                        '<h6>평균 DPS : '+(Math.round(dps)).toString().replace(reg,',')+' </h6>'+
                        '<br><h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
@@ -314,7 +318,7 @@ function wardChart(data){
         visionScoreAvg=visionScoreAvg/visionScore.length;
         html+=
                         '<div class="col-md-6 my-5">'+
-                            '<br><h5><i>해당 라인 와드  설치 및 삭제 그래프</i></h5>'+
+                            '<br><h5><i>와드 정보를 확인하세요.</i></h5>'+
                             '<h6>평균 시야 점수 : '+Math.round(visionScoreAvg,1)+'</h6>'+
                             '<h6>평균 와드 설치 개수 : '+Math.round(wardPlacedAvg,1)+' 개</h6>'+
                             '<h6>평균 와드 삭제 개수 : '+Math.round(wardKilledAvg,1)+' 개</h6>'+
@@ -352,7 +356,63 @@ function wardChart(data){
               });
 }
 
+/**
+*   @Todo 미니언 처치 수를 차트로 나타낸다. Type : bar
+*/
+function minionKilledChart(data){
+    let lane=data[3].lane;
+    let minionKilledInfo=data[3].minionKilledInfo;
+    let labels=[];
+    let laneMinionsFirst10Minutes=[];           //10분 간 미니언 처치 수
+    let jungleCsBefore10Minutes=[];              //10분 간 정글몬스터 처치 수
+    let total10Minutes=[];                                 //10분 간  총 처치 수 (미니언 + 정글 몬스터)
+    let totalMinionsKilled=[];                          //게임 총 미니언 처치 수
+    let neutralMinionsKilled=[];                     //게임 총 정글 몬스터 처치 수
+    let gameTotalMinionKilled=[];                 //게임 총 처치 수 (미니언 + 정글 몬스터)
+    let dataOutputGame=0;
+    let html="";
 
+    //초기화
+    laneMinionsFirst10Minutes   = minionKilledInfo.laneMinionsFirst10Minutes;
+    jungleCsBefore10Minutes      = minionKilledInfo.jungleCsBefore10Minutes;
+    total10Minutes                         = minionKilledInfo.total10Minutes;
+    totalMinionsKilled                   = minionKilledInfo.totalMinionsKilled;
+    neutralMinionsKilled              = minionKilledInfo.neutralMinionsKilled;
+    gameTotalMinionKilled          = minionKilledInfo.gameTotalMinionKilled;
+    for(let i =0; i<total10Minutes.length; i++){
+             dataOutputGame=i+1;
+            labels[i]=String(dataOutputGame)+" Game";
+    }
+   html+=  '<div class="offset-6 col-md-6">'+
+                    '<br><h5><i>미니언 처치 수를 확인하세요.</i></h5>'+
+                    '<canvas id="minionKilledChart"></canvas>'+
+                  '</div>';
+   $("#charts").append(html);
+   const ctx=document.getElementById('minionKilledChart').getContext('2d');
+   new Chart(ctx, {
+                 data: {
+                     labels: labels,
+                   datasets: [{
+                      type: 'line',
+                     label: '10분간 미니언 처치 수',
+                     data:  total10Minutes,
+                     borderWidth: 1
+                   },{
+                         type: 'bar',
+                         label:'총 미니언 처치 수',
+                         data:  gameTotalMinionKilled,
+                         borderWidth: 1
+                   }]
+                 },
+                 options: {
+                   scales: {
+                     y: {
+                       beginAtZero: true
+                     }
+                   }
+                 }
+               });
+}
 
 
 
