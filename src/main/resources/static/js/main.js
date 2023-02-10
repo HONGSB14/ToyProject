@@ -23,21 +23,29 @@ function idInput() {
                                 MostChampion(data);
                                 lane=lineAndRole(data);
                                 if(lane == "Top"){
+                                     championChart(data);
                                      totalDamageChart(data);
+                                     damagePerMinute(data);
                                      minionKilledChart(data);
                                 }else if (lane == "Jungle"){
-                                     totalDamageChart(data);
-                                     minionKilledChart(data);
-                                     wardChart(data);
-                                }else if (lane =="Mid") {
                                       championChart(data);
+                                      totalDamageChart(data);
+                                      wardChart(data);
+                                      minionKilledChart(data);
+                                }else if (lane =="Mid") {
+                                     championChart(data);
                                      totalDamageChart(data);
+                                     wardChart(data);
                                      minionKilledChart(data);
                                 }else if (lane == "Bot"){
+                                     championChart(data);
                                      totalDamageChart(data);
+                                     damagePerMinute(data);
                                      minionKilledChart(data);
                                 }else if (lane == "Support"){
+                                   championChart(data);
                                    wardChart(data);
+                                   damagePerMinute(data);
                                 }
                             }else{
                                 outPutGameErr();
@@ -225,7 +233,7 @@ function lineAndRole(data){
                         '</div>'+
                         '<div class="col-md-5">'+
                             '<h3><i>'+line+' 라인 데이터를 확인하세요.</i></h3>'+
-                            '<span><i> 주로 한 챔피언 타입은　</i></span><span style="color:#5941A9"><i>'+role+'</i></span><span><i>　입니다.</i></span>'+
+                            '<span><i> 선호하는 챔피언 타입은　</i></span><span style="color:#5941A9"><i>'+role+'</i></span><span><i>　입니다.</i></span>'+
                         '</div>'+
                     '</div>';
       $("#matchDataInfo").append(html);
@@ -237,20 +245,30 @@ function lineAndRole(data){
 */
 function championChart(data){
     let champName=[];
-    let kda=[];
-    let labels=[];
     let championName=[];
-    let championGame=[];
+    let championInfo=[];
+    let game=[];
     let html="";
     let dataOutputGame=0;
+    let totalKda=0;
     champName=data[3].getGameChampName;
     championName=Object.keys(champName);
-    championGame=Object.values(champName);
-    console.log(championName);
-    console.log(championGame);
+    championInfo=Object.values(champName);
+
+    for(let i=0; i<championInfo.length; i++){
+            game[i]=championInfo[i][0];
+            let kda=Math.round((championInfo[i][1]/game[i])*100)/100;
+            championName[i]+=" 의 kda: "+kda;
+            dataOutputGame+=Number(game[i]);
+            totalKda+=kda;
+    }
+
     html+=
                     '<div class="col-md-6 my-5">' +
-                        '<canvas id="champNameChart"></canvas>' +
+                        '<br><h5><i>최근 사용한 챔피언을 확인하세요.</i></h5>'+
+                        '<br><h6>해당라인에서 진행한 게임 수 :'+dataOutputGame+' game</h6>'+
+                        '<h6>해당라인 평균 KDA : '+Math.round((totalKda/dataOutputGame)*100)/100+'</h6>'+
+                        '<br><canvas id="champNameChart"></canvas>'+
                     '</div>';
     $("#charts").append(html);
 
@@ -260,8 +278,8 @@ function championChart(data){
             data: {
                 labels: championName,
               datasets: [{
-                label:"챔피언 판 수",
-                data:championGame,
+                label:"챔피언 게임 수",
+                data:game,
                 hoverOffset: 4
               }]
             }
@@ -279,7 +297,7 @@ function totalDamageChart(data) {
     let upperDamage=0;
     let deals=0;
     let dataOutputGame=0;
-    totalDamages=data[3].totalDamage;
+    totalDamages=data[3].damageInfo.totalDamages;
     upperDamage=totalDamages[0];
     lowDamage=totalDamages[0];
     for(let i=0; i<totalDamages.length; i++){
@@ -295,13 +313,13 @@ function totalDamageChart(data) {
     }
     let dps= deals/totalDamages.length;
     html+=
-                   '<div class="col-md-6 my-5" id="chart_1">' +
-                       '<h5><i>경기당 총 데미지를 확인하세요. </i></h5><br>'+
-                       '<h6>해당라인 진행 게임 횟수: '+dataOutputGame+' Game</h6>'+
+                   '<div class="offset-6 col-md-6 my-5" id="chart_1">' +
+                       '<br><h5><i>경기당 총 데미지를 확인하세요. </i></h5>'+
+                       '<br><h6>해당라인 진행 게임 횟수: '+dataOutputGame+' Game</h6>'+
                        '<h6>평균 DPS : '+(Math.round(dps)).toString().replace(reg,',')+' </h6>'+
-                       '<br><h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
+                       '<h6>가장 높은 데미지 : '+upperDamage.toString().replace(reg, ',')+'</h6>'+
                        '<h6>가장 낮은 데미지 : '+lowDamage.toString().replace(reg, ',')+'</h6>'+
-                       '<canvas id="totalDamageChart"></canvas>' +
+                       '<br><canvas id="totalDamageChart"></canvas>' +
                    '<div>';
     $("#charts").append(html);
     const ctx=document.getElementById('totalDamageChart').getContext('2d');
@@ -324,6 +342,54 @@ function totalDamageChart(data) {
         }
       });
 }
+
+/**
+* @Todo 분당 데미지를 차트로 그려낸다. chartType : bar
+*/
+function damagePerMinute(data){
+    let damagesPerMinute=[];
+    let labels=[];
+    let html="";
+    let damagesPerMinuteAvg=0;
+    let dataOutputGame=0;
+
+    damagesPerMinute=data[3].damageInfo.damagePerMinute;
+
+    for (let i=0; i<damagesPerMinute.length; i++){
+        damagesPerMinuteAvg+=damagesPerMinute[i];
+        dataOutputGame+=1;
+        labels[i]=String(dataOutputGame)+' Game';
+    }
+    let damageAvg=Math.round((damagesPerMinuteAvg/dataOutputGame)*100)/100;
+    html+=
+                '<div class="col-md-6 my-5">'+
+                    '<br><h5><i>분당 데미지를 확인하세요.</i><h5>'+
+                    '<h6>분당 평균 데미지 : '+damageAvg+'</h6>'+
+                    '<br><canvas id="minuteDamageChart"></canvas>'+
+                '</div>';
+   $("#charts").append(html);
+    const ctx=document.getElementById('minuteDamageChart').getContext('2d');
+       new Chart(ctx, {
+           type: 'bar',
+           data: {
+               labels: labels,
+             datasets: [{
+               label: damagesPerMinute.length+' game damagesPerMinute',
+               data: damagesPerMinute,
+               borderWidth: 1
+             }]
+           },
+           options: {
+             scales: {
+               y: {
+                 beginAtZero: true
+               }
+             }
+           }
+         });
+
+}
+
 /**
 *   @Todo 총 와드 설치 개수를 차트로 나타낸다. Type : bar
 */
@@ -356,10 +422,10 @@ function wardChart(data){
         html+=
                         '<div class="col-md-6 my-5">'+
                             '<br><h5><i>와드 정보를 확인하세요.</i></h5>'+
-                            '<h6>평균 시야 점수 : '+Math.round(visionScoreAvg,1)+'</h6>'+
+                            '<br><h6>평균 시야 점수 : '+Math.round(visionScoreAvg,1)+' 점</h6>'+
                             '<h6>평균 와드 설치 개수 : '+Math.round(wardPlacedAvg,1)+' 개</h6>'+
                             '<h6>평균 와드 삭제 개수 : '+Math.round(wardKilledAvg,1)+' 개</h6>'+
-                            '<canvas id="wardPlacedChart"></canvas>'+
+                            '<br><canvas id="wardPlacedChart"></canvas>'+
                         '<div>';
         $("#charts").append(html);
         const ctx=document.getElementById('wardPlacedChart').getContext('2d');
@@ -407,6 +473,8 @@ function minionKilledChart(data){
     let neutralMinionsKilled=[];                     //게임 총 정글 몬스터 처치 수
     let gameTotalMinionKilled=[];                 //게임 총 처치 수 (미니언 + 정글 몬스터)
     let dataOutputGame=0;
+    let minionKilled10minAvg=0;
+    let minionKilledTotalAvg=0;
     let html="";
 
     //초기화
@@ -417,12 +485,16 @@ function minionKilledChart(data){
     neutralMinionsKilled              = minionKilledInfo.neutralMinionsKilled;
     gameTotalMinionKilled          = minionKilledInfo.gameTotalMinionKilled;
     for(let i =0; i<total10Minutes.length; i++){
-             dataOutputGame=i+1;
+            dataOutputGame=i+1;
             labels[i]=String(dataOutputGame)+" Game";
+            minionKilled10minAvg+=total10Minutes[i];
+            minionKilledTotalAvg+=gameTotalMinionKilled[i];
     }
-   html+=  '<div class="offset-6 col-md-6">'+
+   html+=  '<div class="offset-6 col-md-6  my-5">'+
                     '<br><h5><i>미니언 처치 수를 확인하세요.</i></h5>'+
-                    '<canvas id="minionKilledChart"></canvas>'+
+                    '<br><h6>10분간 평균 미니언 처치 수 : '+Math.round(minionKilled10minAvg/dataOutputGame)+' 개</h6>'+
+                    '<h6>게임 평균 미니언 처치 수 : '+Math.round(minionKilledTotalAvg/dataOutputGame)+' 개</h6>'+
+                    '<br><canvas id="minionKilledChart"></canvas>'+
                   '</div>';
    $("#charts").append(html);
    const ctx=document.getElementById('minionKilledChart').getContext('2d');
@@ -450,28 +522,6 @@ function minionKilledChart(data){
                  }
                });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /**
