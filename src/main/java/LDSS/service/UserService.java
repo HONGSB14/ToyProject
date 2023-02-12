@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-6c764a57-2a60-49b6-892a-d9db0636f92f";
+        String api_key="RGAPI-ed377a07-cbf3-4161-a8b9-c1c28eaa7392";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -86,8 +86,8 @@ public class UserService {
                     jsonArray.add(myInfoValue);                                                    //유저정보
                     jsonArray.add(gameInfo(myId));                                              //랭크정보
                     jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
-//                    jsonArray.add(getMatchInfo(puuId));                                     //매치정보
-                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보
+//                    jsonArray.add(getMatchInfo(puuId));                                     //매치정보 ( 확인용 )
+                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보     ( 실제 데이터 )
                 }else{
                     return null;
                 }
@@ -235,7 +235,7 @@ public class UserService {
                         }
                     }
                }
-              return ja;
+                  return ja;
     //            return matchValue;
             }
         }catch (Exception e){
@@ -489,6 +489,7 @@ public class UserService {
      * return ArrayList<String> 챔피언 이름
      */
     public HashMap<String,ArrayList<String>> getGameChampName(JSONArray getMatchInfo,String line){
+
         ArrayList<String> getChampNames = new ArrayList<>();
         ArrayList<String> kda= new ArrayList<>();
         HashMap<String,ArrayList<String>> getChampCount = new HashMap<>();

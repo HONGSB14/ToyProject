@@ -1,20 +1,24 @@
 $(function() {
     $("#loading").hide();   //스피너 숨기기
+    $("#myId").keyup(function(e){
+        if(e.keyCode==13){
+            idInput();
+        }
+    });
 });
 
 /**
 *   @todo:입력값
 */
 function idInput() {
-    let html="";
-    let status="error";       //error 발생
-    let lane="";                  // 주 라인
     pageClear();
+    let html="";
+    let status="error";         //error 발생
+    let lane="";                    // 주 라인
     $("#loading").show();
     $.ajax({
             url:"/user/idInput",
             data:{"myId":$("#myId").val()},
-            async:false,
             method:'POST',
             success:function (data){
                     console.log(data);
@@ -46,9 +50,10 @@ function idInput() {
                                      minionKilledChart(data);
                                 }else if (lane == "Support"){
                                    championChart(data);
+                                   totalDamageChart(data);
                                    wardChart(data);
-                                   damagePerMinute(data);
                                 }
+                                 pageEffect(lane);
                             }else{
                                 outPutGameErr();
                             }
@@ -266,11 +271,14 @@ function championChart(data){
     }
 
     html+=
-                    '<div class="col-md-6 my-5">' +
+                    '<div class="col-md-6 my-5 charts">' +
                         '<br><h5><i>최근 사용한 챔피언을 확인하세요.</i></h5>'+
                         '<br><h6>해당라인에서 진행한 게임 수 : '+dataOutputGame+' game</h6>'+
                         '<h6>해당라인 평균 KDA : '+Math.round((totalKda/dataOutputGame)*100)/100+'</h6>'+
                         '<br><canvas id="champNameChart"></canvas>'+
+                    '</div>'+
+                    '<div class="col-md-6 my-5 charts">'+
+                    '<img class="img-fluid pt-5 mt-5" src="../img/bg_illust/bg_All_Park.jpg">'+
                     '</div>';
     $("#charts").append(html);
 
@@ -315,7 +323,10 @@ function totalDamageChart(data) {
     }
     let dps= deals/totalDamages.length;
     html+=
-                   '<div class="offset-6 col-md-6 my-5" id="chart_1">' +
+                   '<div class="col-md-6 charts">'+
+                       '<img class="img-fluid" src="../img/bg_illust/bg_Tryndamere.jpg">'+
+                  '</div>'+
+                   '<div class="col-md-6 my-5 charts">' +
                        '<br><h5><i>경기당 총 데미지를 확인하세요. </i></h5>'+
                        '<br><h6>해당라인 진행 게임 횟수: '+dataOutputGame+' Game</h6>'+
                        '<h6>평균 DPS : '+(Math.round(dps)).toString().replace(reg,',')+' </h6>'+
@@ -364,11 +375,14 @@ function damagePerMinute(data){
     }
     let damageAvg=Math.round((damagesPerMinuteAvg/dataOutputGame)*100)/100;
     html+=
-                '<div class="col-md-6 my-5">'+
+                '<div class="col-md-6 my-5 charts">'+
                     '<br><h5><i>분당 데미지를 확인하세요.</i><h5>'+
                     '<h6>분당 평균 데미지 : '+damageAvg+'</h6>'+
                     '<br><canvas id="minuteDamageChart"></canvas>'+
-                '</div>';
+                '</div>'+
+                '<div class="col-md-6 charts">'+
+                   '<img class="img-fluid" src="../img/bg_illust/bg_Gangplank.jpg">'+
+                '</div>' ;
    $("#charts").append(html);
     const ctx=document.getElementById('minuteDamageChart').getContext('2d');
        new Chart(ctx, {
@@ -422,13 +436,16 @@ function wardChart(data){
         wardKilledAvg=wardKilledAvg/wardKilled.length;
         visionScoreAvg=visionScoreAvg/visionScore.length;
         html+=
-                        '<div class="col-md-6 my-5">'+
+                        '<div class="col-md-6 my-5 charts">'+
                             '<br><h5><i>와드 정보를 확인하세요.</i></h5>'+
                             '<br><h6>평균 시야 점수 : '+Math.round(visionScoreAvg,1)+' 점</h6>'+
                             '<h6>평균 와드 설치 개수 : '+Math.round(wardPlacedAvg,1)+' 개</h6>'+
                             '<h6>평균 와드 삭제 개수 : '+Math.round(wardKilledAvg,1)+' 개</h6>'+
                             '<br><canvas id="wardPlacedChart"></canvas>'+
-                        '<div>';
+                        '</div>'+
+                        '<div class="col-md-6 charts">'+
+                           '<img class="img-fluid" src="../img/bg_illust/bg_Blitzcrank.jpg">'+
+                        '</div>';
         $("#charts").append(html);
         const ctx=document.getElementById('wardPlacedChart').getContext('2d');
         new Chart(ctx, {
@@ -492,12 +509,15 @@ function minionKilledChart(data){
             minionKilled10minAvg+=total10Minutes[i];
             minionKilledTotalAvg+=gameTotalMinionKilled[i];
     }
-   html+=  '<div class="offset-6 col-md-6  my-5">'+
-                    '<br><h5><i>미니언 처치 수를 확인하세요.</i></h5>'+
-                    '<br><h6>10분간 평균 미니언 처치 수 : '+Math.round(minionKilled10minAvg/dataOutputGame)+' 개</h6>'+
-                    '<h6>게임 평균 미니언 처치 수 : '+Math.round(minionKilledTotalAvg/dataOutputGame)+' 개</h6>'+
-                    '<br><canvas id="minionKilledChart"></canvas>'+
-                  '</div>';
+   html+=     '<div class="col-md-6 charts">'+
+                          '<img class="img-fluid" src="../img/bg_illust/bg_Lucian.jpg">'+
+                    '</div>'+
+                    '<div class="col-md-6  my-5 charts">'+
+                        '<br><h5><i>미니언 처치 수를 확인하세요.</i></h5>'+
+                        '<br><h6>10분간 평균 미니언 처치 수 : '+Math.round(minionKilled10minAvg/dataOutputGame)+' 개</h6>'+
+                        '<h6>게임 평균 미니언 처치 수 : '+Math.round(minionKilledTotalAvg/dataOutputGame)+' 개</h6>'+
+                        '<br><canvas id="minionKilledChart"></canvas>'+
+                   '</div>';
    $("#charts").append(html);
    const ctx=document.getElementById('minionKilledChart').getContext('2d');
    new Chart(ctx, {
@@ -524,6 +544,40 @@ function minionKilledChart(data){
                  }
                });
 }
+
+/**
+*   @todo  화면 이벤트를 발생시킨다.
+*/
+function pageEffect(lane){
+       let observer=new IntersectionObserver((e)=>{
+            e.forEach((chart)=>{
+                if(chart.isIntersecting){
+                     chart.target.style.opacity = 1;
+                }else{
+                     chart.target.style.opacity = 0;
+                }
+            })
+       })
+       let charts=$(".charts");
+       if(lane !="Support"){
+               observer.observe(charts[0]);         //차트
+               observer.observe(charts[1]);         //차트이미지
+               observer.observe(charts[2]);
+               observer.observe(charts[3]);
+               observer.observe(charts[4]);
+               observer.observe(charts[5]);
+               observer.observe(charts[6]);
+               observer.observe(charts[7]);
+       }else{
+              observer.observe(charts[0]);
+              observer.observe(charts[1]);
+              observer.observe(charts[2]);
+              observer.observe(charts[3]);
+              observer.observe(charts[4]);
+              observer.observe(charts[5]);
+       }
+}
+
 
 
 /**
@@ -559,7 +613,7 @@ function outPutGameErr(){
 * @todo 모든 값을 초기화 시킨다.
 */
 function pageClear(){
-      $("#loading").hide();   //스피너 숨기기
+      $("#loading").hide();
       $("#userRankInfo").empty();
       $("#mainStatusInfo").empty();
       $("#mostChamp").empty();
