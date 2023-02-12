@@ -1,18 +1,20 @@
 $(function() {
     $("#loading").hide();   //스피너 숨기기
 });
+
 /**
 *   @todo:입력값
 */
 function idInput() {
     let html="";
     let status="error";       //error 발생
-    let lane="";                    // 주 라인
+    let lane="";                  // 주 라인
     pageClear();
     $("#loading").show();
     $.ajax({
             url:"/user/idInput",
             data:{"myId":$("#myId").val()},
+            async:false,
             method:'POST',
             success:function (data){
                     console.log(data);
@@ -266,7 +268,7 @@ function championChart(data){
     html+=
                     '<div class="col-md-6 my-5">' +
                         '<br><h5><i>최근 사용한 챔피언을 확인하세요.</i></h5>'+
-                        '<br><h6>해당라인에서 진행한 게임 수 :'+dataOutputGame+' game</h6>'+
+                        '<br><h6>해당라인에서 진행한 게임 수 : '+dataOutputGame+' game</h6>'+
                         '<h6>해당라인 평균 KDA : '+Math.round((totalKda/dataOutputGame)*100)/100+'</h6>'+
                         '<br><canvas id="champNameChart"></canvas>'+
                     '</div>';
@@ -531,9 +533,8 @@ function minionKilledChart(data){
 function outPutErr(){
     let html="";
          html+=  '<div class="col-md-12">'+
-                             '<h2>데이터 분석실패<h2>'+
-                              '<h2>데이터를 불러 올 수 없습니다.<h2>'+
-                              '<h6>검색하신 아이디를 다시한번 확인해주세요. </h6>'
+                              '<br><h2>데이터를 불러 올 수 없습니다.<h2>'+
+                              '<h6>검색하신 아이디를 다시한번 확인해주세요. </h6>'+
                          '</div>';
     $("#loading").hide();   //스피너 숨기기
     $("#mainStatusInfo").append(html);
@@ -547,9 +548,8 @@ function outPutGameErr(){
     pageClear();
     let html="";
          html+=  '<div class="col-md-12">'+
-                             '<h2>데이터 분석실패<h2>'+
-                              '<h2>데이터를 불러 올 수 없습니다.<h2>'+
-                              '<h6>솔로랭크 게임 기준 10판 이상 게임을 진행했는지 확인해 주세요. </h6>'
+                              '<br><h2>데이터를 불러 올 수 없습니다.<h2>'+
+                              '<h6>솔로랭크 게임 기준 10판 이상 게임을 진행했는지 확인해 주세요. </h6>'+
                          '</div>';
     $("#loading").hide();   //스피너 숨기기
     $("#mainStatusInfo").append(html);

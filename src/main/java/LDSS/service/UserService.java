@@ -524,6 +524,5 @@ public class UserService {
         return getChampCount;
     }
 
-
 }
 

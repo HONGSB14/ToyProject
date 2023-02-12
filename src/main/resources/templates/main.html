@@ -9,6 +9,7 @@
     <div th:replace="header.html"></div>
         <div class="container" id="allDiv">
             <div class="col-md-12 text-center p-1" id="mainHeader" style="background-color :#6D72C3; border-radius:5px;">
+                <form action="./user/idInput" method="post">
                     <div class="row g-3">
                         <!-- 왼쪽 백그라운드 이미지 넣는 곳 -->
                         <div class="col-md-1">
@@ -20,13 +21,14 @@
                         </div>
                         <!-- 조회 버튼-->
                         <div class="col-md-1 my-5">
-                                <button class="form-control" type="button" onclick="idInput()">조회</button>
+                                <button class="form-control" onclick="idInput()">조회</button>
                         </div>
                         <!--오른쪽 백그라운드 이미지 넣는 곳 -->
                         <div class="offset-2 col-md-1">
                             <!-- <img src="이미지 넣을 파일명" width="150px" height="150px"> -->
                         </div>
                     </div>
+                </form>
             </div>
             <!--게임정보-->
             <div class="col-md-12" id="main">

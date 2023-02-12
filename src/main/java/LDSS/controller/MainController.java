@@ -17,7 +17,7 @@ public class MainController {
 
     @PostMapping("/idInput")
     public JSONArray userInfo(@RequestParam ("myId")String myName){
-       return userService.userInfo(myName);
+        return userService.userInfo(myName);
     }
 
 }
