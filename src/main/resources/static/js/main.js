@@ -265,7 +265,7 @@ function championChart(data){
     for(let i=0; i<championInfo.length; i++){
             game[i]=championInfo[i][0];
             let kda=Math.round((championInfo[i][1]/game[i])*100)/100;
-            championName[i]+=" 의 kda: "+kda;
+            championName[i]+=" 의 kda : "+kda;
             dataOutputGame+=Number(game[i]);
             totalKda+=kda;
     }
@@ -278,7 +278,7 @@ function championChart(data){
                         '<br><canvas id="champNameChart"></canvas>'+
                     '</div>'+
                     '<div class="col-md-6 my-5 charts">'+
-                    '<img class="img-fluid pt-5 mt-5" src="../img/bg_illust/bg_All_Park.jpg">'+
+                         '<img class="img-fluid pt-5 mt-5" src="../img/bg_illust/bg_All_Park.jpg">'+
                     '</div>';
     $("#charts").append(html);
 

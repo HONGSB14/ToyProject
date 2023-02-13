@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-ed377a07-cbf3-4161-a8b9-c1c28eaa7392";
+        String api_key="RGAPI-18d1a281-eadc-4c1e-a75d-dcaf9e8b867b";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -126,10 +126,9 @@ public class UserService {
         String champMapping="";
         String myChamp="";
         String myChampionTop=myId+"/top?count=5&";
-
         //해당 API URL
         String mainChampionURL="https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/";
-        String championsURL="https://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
+        String championsURL="http://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
         //챔피언 정보 API
         JSONArray zero =getAPI("?",championsURL);
         JSONObject data= (JSONObject) zero.get(0);
@@ -172,7 +171,7 @@ public class UserService {
         JSONArray ja= new JSONArray();
        //매치 정보가 없을 경우에 대한 null 및 예외처리
         try{
-            String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=30&";
+            String MatchIdURL="https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuId+"/ids?start=0&count=50&";
             JSONArray jsonArray=getAPI("",MatchIdURL);
             JSONArray  matchValue= new JSONArray();      //매치 데이터 받아온 값
             ArrayList<String> matchIds= new ArrayList<>();  //타임라인
@@ -235,7 +234,7 @@ public class UserService {
                         }
                     }
                }
-                  return ja;
+                 return ja;
     //            return matchValue;
             }
         }catch (Exception e){
@@ -331,7 +330,7 @@ public class UserService {
         ArrayList<String> championName= new ArrayList<>();
         ArrayList<String> roles = new ArrayList<>();
 
-        String championsURL="https://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
+        String championsURL="http://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
         //챔피언 정보 API
         JSONArray zero =getAPI("?",championsURL);
         JSONObject data= (JSONObject) zero.get(0);
