@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-2e700b1f-3a35-4295-9cb0-213072ad443a";
+        String api_key="RGAPI-6d03ec06-a840-471d-b641-2deb0d15d2db";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -217,6 +217,8 @@ public class UserService {
                                 int neutralMinionsKilled = Integer.parseInt(String.valueOf(member.get("neutralMinionsKilled")));                                                   //11. 총 정글몹 처치 수
                                 int  damagePerMinute =(int)(Math.round(Float.parseFloat(String.valueOf(challenges.get("damagePerMinute")))));                         //12. 분당 데미지
                                 double kda=Math.round(Float.parseFloat(String.valueOf(challenges.get("kda")))*100)/100.0;                                                               //13. kda
+                                gameDuration=Integer.parseInt(String.valueOf(info.get("gameDuration")));
+                                long gameEndTimeStamp =Long.parseLong(String.valueOf(info.get("gameEndTimestamp")));                                                   //14. 게임 종료시간
                                 //데이터 가공값에 넣기
                                 jo.put("lane",lane);                                                                                                                     //1.라인
                                 jo.put("championName",championName);                                                                            //2.챔피언 이름
@@ -231,12 +233,14 @@ public class UserService {
                                 jo.put("neutralMinionsKilled",neutralMinionsKilled);                                                        //11. 게임 토탈 정글 미니언 처치 수
                                 jo.put("damagePerMinute",damagePerMinute);                                                                  //12. 분당 데미지
                                 jo.put("kda",kda);                                                                                                                      //13. kda
+                                jo.put("gameDuration",gameDuration);                                                                                 //14. 게임 시간  (게임종료 시간 - 게임시작 시간)
+                                jo.put("gameEndTimestamp",gameEndTimeStamp);                                                           //15. 게임 종료시간
                                 ja.add(jo);                                                                                                                                   //리턴값에 넣기
                             }
                         }
                     }
                }
-                 return ja;
+                return ja;
     //            return matchValue;
             }
         }catch (Exception e){
@@ -253,6 +257,7 @@ public class UserService {
         JSONObject jsonObject = new JSONObject();
         ArrayList<String> lane =new ArrayList<>();
         ArrayList<String> ChampName=new ArrayList<>();
+        ArrayList<String> gameTime = new ArrayList<>();
         HashMap<String,ArrayList<Integer>> damageInfo= new HashMap<>();
         HashMap<String,ArrayList<String>> getGameChampName= new HashMap<>();
         HashMap<String,ArrayList<Integer>> wardInfo =new HashMap<>();
@@ -273,12 +278,14 @@ public class UserService {
         wardInfo=getWardInfo(getMatchInfo,line);
         minionKilledInfo=getMinionsKilledInfo(getMatchInfo,line);
         getGameChampName=getGameChampName(getMatchInfo,line);
+        gameTime=getGameTime(getMatchInfo,line);
         jsonObject.put("lane", line);                                                                       //주 라인
         jsonObject.put("champRole", champRole);                                              //주요역할군
         jsonObject.put("damageInfo",damageInfo);                                             //토탈 대미지 ( 챔피언에게 가한 데미지)
         jsonObject.put("wardInfo", wardInfo);                                                     //와드 정보
         jsonObject.put("minionKilledInfo",minionKilledInfo);                          //미니언 처치 수 정보
         jsonObject.put("getGameChampName", getGameChampName);          //챔피언 이름
+        jsonObject.put("gameTime",gameTime);                                                  //게임 시간
         return jsonObject;
     }
 
@@ -529,5 +536,53 @@ public class UserService {
         return getChampCount;
     }
 
+    public ArrayList<String> getGameTime(JSONArray getMatchInfo,String line){
+        ArrayList<String> gameTime =new ArrayList<>();
+        ArrayList<String> champName= new ArrayList<>();
+        ArrayList<Long> gameTimeEnd= new ArrayList<>();
+        ArrayList<Integer> gameDuration= new ArrayList<>();
+
+        String mainLine="";
+        String time="";
+
+        int hour=0;
+        int min=0;
+        int second=0;
+
+        int i=0;
+        for (i = 0; i < getMatchInfo.size(); i++) {
+            JSONObject userGameInfo = (JSONObject) getMatchInfo.get(i);
+            mainLine=(String)userGameInfo.get("lane");                                                 //해당 라인 구하기
+            if(mainLine.equals(line)){
+                gameTimeEnd.add((Long) userGameInfo.get("gameEndTimestamp"));
+                gameDuration.add((Integer) userGameInfo.get("gameDuration"));
+                champName.add((String)userGameInfo.get("championName"));
+            }
+        }
+
+        for(i =0; i < gameTimeEnd.size(); i++){
+            if(gameTimeEnd.get(i)==0){
+                hour=(gameDuration.get(i)/(1000*60*60))%24;
+                min=(gameDuration.get(i)/(1000*60))%60;
+                second=(gameDuration.get(i)/1000)%60;
+                if(hour==0){
+                    time=champName.get(i)+"　"+min+"분"+second+"초";
+                }else{
+                    time=champName.get(i)+"　"+hour+"시"+min+"분"+second+"초";
+                }
+            }else{
+               hour=(gameDuration.get(i)/60)/60;
+               min=(gameDuration.get(i)/60)%60;
+               second=gameDuration.get(i)%60;
+               if(hour==0){
+                   time=champName.get(i)+"　"+min+"분"+second+"초";
+               }else{
+                   time=champName.get(i)+"　"+hour+"시"+min+"분"+second+"초";
+               }
+            }
+            gameTime.add(time);
+        }
+        return gameTime;
+    }
 }
 

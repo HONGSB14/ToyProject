@@ -299,6 +299,7 @@ function championChart(data){
 * @Todo 총합데미지를 차트로 그려낸다. chartType : bar
 */
 function totalDamageChart(data) {
+    let gameTime=[];
     let totalDamages=[];
     let labels=[];
     let reg=/\B(?=(\d{3})+(?!\d))/g;
@@ -307,6 +308,7 @@ function totalDamageChart(data) {
     let upperDamage=0;
     let deals=0;
     let dataOutputGame=0;
+    gameTime=data[3].gameTime;
     totalDamages=data[3].damageInfo.totalDamages;
     upperDamage=totalDamages[0];
     lowDamage=totalDamages[0];
@@ -341,7 +343,7 @@ function totalDamageChart(data) {
         data: {
             labels: labels,
           datasets: [{
-            label: totalDamages.length+' game totalDamage',
+            label:  'game totalDamage',
             data: totalDamages,
             borderWidth: 1
           }]
