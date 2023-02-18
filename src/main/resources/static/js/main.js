@@ -413,33 +413,40 @@ function wardChart(data){
         let wardPlaced = [];
         let wardKilled= [] ;
         let visionScore = [] ;
+        let visionWards=[];
+        let totalWardPlaces=[];
         let labels = [];
         let i=0;
         let wardPlacedAvg=0;
         let wardKilledAvg=0;
         let visionScoreAvg=0;
+        let visionWardAvg=0;
         let dataOutputGame=0;
         let html="";
         //해당 데이터로 초기화
         wardPlaced=data[3].wardInfo.wardPlaced;
         wardKilled= data[3].wardInfo.wardKilled;
         visionScore=data[3].wardInfo.visionScore;
-
+        visionWards=data[3].wardInfo.visionWardsBoughtInGame;
         for (i =0; i<wardPlaced.length; i++){
             dataOutputGame=i+1;
+            totalWardPlaces[i]=wardPlaced[i]+visionWards[i];
             labels[i]=String(dataOutputGame)+" Game";
             wardPlacedAvg+=wardPlaced[i];
             wardKilledAvg+=wardKilled[i];
+            visionWardAvg+=visionWards[i];
             visionScoreAvg+=visionScore[i];
         }
         wardPlacedAvg=wardPlacedAvg/wardPlaced.length;
         wardKilledAvg=wardKilledAvg/wardKilled.length;
+        visionWardAvg=visionWardAvg/visionWards.length;
         visionScoreAvg=visionScoreAvg/visionScore.length;
         html+=
                         '<div class="col-md-6 my-5 charts">'+
                             '<br><h5><i>와드 정보를 확인하세요.</i></h5>'+
                             '<br><h6>평균 시야 점수 : '+Math.round(visionScoreAvg,1)+' 점</h6>'+
                             '<h6>평균 와드 설치 개수 : '+Math.round(wardPlacedAvg,1)+' 개</h6>'+
+                            '<h6>평균 비전와드 설치 개수 :'+Math.round(visionWardAvg,1)+' 개</h6>'+
                             '<h6>평균 와드 삭제 개수 : '+Math.round(wardKilledAvg,1)+' 개</h6>'+
                             '<br><canvas id="wardPlacedChart"></canvas>'+
                         '</div>'+
@@ -452,11 +459,16 @@ function wardChart(data){
                 data: {
                     labels: labels,
                   datasets: [{
-                     type: 'bar',
-                    label: '와드 설치개수',
-                    data:  wardPlaced,
-                    borderWidth: 1
-                  },{
+                        type: 'bar',
+                        label: '와드 설치개수',
+                        data:  wardPlaced,
+                        borderWidth: 1
+                      },{
+                       type: 'bar',
+                       label: '비전와드 설치개수',
+                       data:  visionWards,
+                       borderWidth: 1
+                     },{
                          type: 'bar',
                          label: '와드 삭제개수',
                          data:  wardKilled,
