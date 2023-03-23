@@ -19,7 +19,7 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-6d03ec06-a840-471d-b641-2deb0d15d2db";
+        String api_key="RGAPI-bd18be15-e10b-4073-b8b5-1d0743a1a037";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
@@ -218,7 +218,7 @@ public class UserService {
                                 int  damagePerMinute =(int)(Math.round(Float.parseFloat(String.valueOf(challenges.get("damagePerMinute")))));                         //12. 분당 데미지
                                 double kda=Math.round(Float.parseFloat(String.valueOf(challenges.get("kda")))*100)/100.0;                                                               //13. kda
                                 gameDuration=Integer.parseInt(String.valueOf(info.get("gameDuration")));
-                                long gameEndTimeStamp =Long.parseLong(String.valueOf(info.get("gameEndTimestamp")));                                                   //14. 게임 종료시간
+//                                long gameEndTimeStamp =Long.parseLong(String.valueOf(info.get("gameEndTimestamp")));                                                           //14. 게임 종료시간
                                 //데이터 가공값에 넣기
                                 jo.put("lane",lane);                                                                                                                     //1.라인
                                 jo.put("championName",championName);                                                                            //2.챔피언 이름
@@ -234,7 +234,7 @@ public class UserService {
                                 jo.put("damagePerMinute",damagePerMinute);                                                                  //12. 분당 데미지
                                 jo.put("kda",kda);                                                                                                                      //13. kda
                                 jo.put("gameDuration",gameDuration);                                                                                 //14. 게임 시간  (게임종료 시간 - 게임시작 시간)
-                                jo.put("gameEndTimestamp",gameEndTimeStamp);                                                           //15. 게임 종료시간
+//                                jo.put("gameEndTimestamp",gameEndTimeStamp);                                                           //15. 게임 종료시간
                                 ja.add(jo);                                                                                                                                   //리턴값에 넣기
                             }
                         }
@@ -257,7 +257,7 @@ public class UserService {
         JSONObject jsonObject = new JSONObject();
         ArrayList<String> lane =new ArrayList<>();
         ArrayList<String> ChampName=new ArrayList<>();
-        ArrayList<String> gameTime = new ArrayList<>();
+//        ArrayList<String> gameTime = new ArrayList<>();
         HashMap<String,ArrayList<Integer>> damageInfo= new HashMap<>();
         HashMap<String,ArrayList<String>> getGameChampName= new HashMap<>();
         HashMap<String,ArrayList<Integer>> wardInfo =new HashMap<>();
@@ -278,14 +278,14 @@ public class UserService {
         wardInfo=getWardInfo(getMatchInfo,line);
         minionKilledInfo=getMinionsKilledInfo(getMatchInfo,line);
         getGameChampName=getGameChampName(getMatchInfo,line);
-        gameTime=getGameTime(getMatchInfo,line);
+//        gameTime=getGameTime(getMatchInfo,line);
         jsonObject.put("lane", line);                                                                       //주 라인
         jsonObject.put("champRole", champRole);                                              //주요역할군
         jsonObject.put("damageInfo",damageInfo);                                             //토탈 대미지 ( 챔피언에게 가한 데미지)
         jsonObject.put("wardInfo", wardInfo);                                                     //와드 정보
         jsonObject.put("minionKilledInfo",minionKilledInfo);                          //미니언 처치 수 정보
         jsonObject.put("getGameChampName", getGameChampName);          //챔피언 이름
-        jsonObject.put("gameTime",gameTime);                                                  //게임 시간
+//        jsonObject.put("gameTime",gameTime);                                                  //게임 시간
         return jsonObject;
     }
 
@@ -535,7 +535,7 @@ public class UserService {
         }
         return getChampCount;
     }
-
+    //잠시 보류상태
     public ArrayList<String> getGameTime(JSONArray getMatchInfo,String line){
         ArrayList<String> gameTime =new ArrayList<>();
         ArrayList<String> champName= new ArrayList<>();
