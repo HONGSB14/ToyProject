@@ -18,5 +18,6 @@ public class Index {
         System.out.println("Server Start Time Check>>>>>>>>"+today);
         System.out.println("hello, Admin!!!");
         System.out.println("LOL DATA SEARCH SYSTEM ON");
+        System.out.println("hello!");
     }
 }
