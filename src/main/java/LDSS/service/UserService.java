@@ -19,13 +19,14 @@ public class UserService {
      * @return JSONArray
      */
     public JSONArray getAPI(String paramValue,String URL){
-        String api_key="RGAPI-bd18be15-e10b-4073-b8b5-1d0743a1a037";
+        String api_key="RGAPI-27ffd22e-5ac2-4ec3-bf01-e7d16fbc58e7";
         JSONArray  ja= new JSONArray();
         try {
             StringBuilder urlBuilder = new StringBuilder(URL);
             urlBuilder.append(paramValue);
             urlBuilder.append("api_key=" + api_key);
             URL url = new URL(urlBuilder.toString());
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-type", "application/json");
@@ -71,23 +72,31 @@ public class UserService {
                 String puuId="";
                 //입력값 공백 제거
                 String reMyName=myName.replace(" ","%20")+"?";          // %20 은 공백을 설정한 값을 뜻한다.
+                String gameId=reMyName.split("#")[0];
+                String tagId=reMyName.split("#")[1];
+                String riotId=gameId+"/"+tagId;
                 //해당 API URL
-                String userInfoURL="https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
+                String userInfoURL="https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/";
                 //getAPI 메소드를 통해 API값 가져오기 (나)
-                JSONArray myInfo =getAPI(reMyName,userInfoURL);
+                JSONArray myInfo =getAPI(riotId,userInfoURL);
                 JSONObject myInfoValue=(JSONObject) myInfo.get(0);
                 JSONObject myStatus=(JSONObject) myInfoValue.get("status");
 
                 //만약  status 값이 있다면  >> 오류발생  >> null 처리
                 if( myStatus == null) {
                     //만약  값이 존재 한다면 값 넘기기
-                    myId=(String)myInfoValue.get("id");
                     puuId=(String)myInfoValue.get("puuid");
+                    userInfoURL="https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/";
+
+                    JSONArray userInfo =getAPI(puuId+"?",userInfoURL);
+                    JSONObject userValue=(JSONObject) userInfo.get(0);
+                    myId=(String)userValue.get("id");
+
                     jsonArray.add(myInfoValue);                                                    //유저정보
                     jsonArray.add(gameInfo(myId));                                              //랭크정보
-                    jsonArray.add(mainChampion(myId));                                   //모스트 챔피언 정보
+                    jsonArray.add(mainChampion(puuId));                                   //모스트 챔피언 정보
 //                    jsonArray.add(getMatchInfo(puuId));                                     //매치정보 ( 확인용 )
-                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));       //매치정보     ( 실제 데이터 )
+                    jsonArray.add(dataProcessing(getMatchInfo(puuId)));          //매치정보     ( 실제 데이터 )
                 }else{
                     return null;
                 }
@@ -127,7 +136,7 @@ public class UserService {
         String myChamp="";
         String myChampionTop=myId+"/top?count=5&";
         //해당 API URL
-        String mainChampionURL="https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/";
+        String mainChampionURL="https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/";
         String championsURL="http://ddragon.leagueoflegends.com/cdn/13.1.1/data/ko_KR/champion.json";
         //챔피언 정보 API
         JSONArray zero =getAPI("?",championsURL);
@@ -197,13 +206,14 @@ public class UserService {
                     JSONArray participants=(JSONArray) info.get("participants");
                     gameDuration=Integer.parseInt(String.valueOf(info.get("gameDuration")));
                     queueId=String.valueOf(info.get("queueId"));
-                    if(queueId.equals("420") && gameDuration>300  ) {                                                                                                             //솔랭 데이터만 뽑기 , 다시하기 제외
-                        gameCount++;                                                                                                                                                                            //랭크 게임 판수 20경기까지 조회하기위해 카운팅
+                    if(queueId.equals("420") && gameDuration>300  ) {                                                                                                               //솔랭 데이터만 뽑기 , 다시하기 제외
+                        gameCount++;                                                                                                                                                                          //랭크 게임 판수 20경기까지 조회하기위해 카운팅
                         JSONObject jo=new JSONObject();                                                                                                                                         //데이터 가공객체
                         for (int j=0; j<participants.size(); j++) {                                                                                                                                 //각각의 매치경기 수 만큼
-                            JSONObject member = (JSONObject) participants.get(j);                                                                                              //매치에 참여한 유저들 중에
+                            JSONObject member = (JSONObject) participants.get(j);                                                                                                //매치에 참여한 유저들 중에
                             if (member.get("puuid").equals(puuId)) {                                                                                                                        // 유저가 검색한 아이디 찾기
                                 JSONObject challenges = (JSONObject) member.get("challenges");
+                               
                                 String lane = (String) member.get("teamPosition");                                                                                                                                      //1. 검색한 아이디의 라인
                                 String championName=(String)member.get("championName");                                                                                                               //2. 검색한 아이디의 챔피언
                                 int totalDamage=Integer.parseInt(String.valueOf(member.get("totalDamageDealtToChampions")));                                                    //3. 검색한 아이디의 데미지 총량
@@ -234,7 +244,7 @@ public class UserService {
                                 jo.put("damagePerMinute",damagePerMinute);                                                                  //12. 분당 데미지
                                 jo.put("kda",kda);                                                                                                                      //13. kda
                                 jo.put("gameDuration",gameDuration);                                                                                 //14. 게임 시간  (게임종료 시간 - 게임시작 시간)
-//                                jo.put("gameEndTimestamp",gameEndTimeStamp);                                                           //15. 게임 종료시간
+//                                jo.put("gameEndTimestamp",gameEndTimeStamp);                                                              //15. 게임 종료시간
                                 ja.add(jo);                                                                                                                                   //리턴값에 넣기
                             }
                         }
@@ -285,7 +295,7 @@ public class UserService {
         jsonObject.put("wardInfo", wardInfo);                                                     //와드 정보
         jsonObject.put("minionKilledInfo",minionKilledInfo);                          //미니언 처치 수 정보
         jsonObject.put("getGameChampName", getGameChampName);          //챔피언 이름
-//        jsonObject.put("gameTime",gameTime);                                                  //게임 시간
+//        jsonObject.put("gameTime",gameTime);                                                //게임 시간
         return jsonObject;
     }
 

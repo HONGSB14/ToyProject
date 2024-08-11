@@ -125,7 +125,7 @@ function  RankInfo(data){
             html+= '<div class="col-md-12 row">'+
                                 '<h2><strong>Rank Info</strong></h2>'+
                                 '<div class="col-md-3">'+
-                                    '<h5 class="offset-1"><img class="img-fluid"  src="../img/rank_icon/Emblem_'+tier.split(" ")[0]+'.gif" style="width:85px; height:85px; border-radius:70%;"></h5>'+
+                                    '<h5 class="offset-1"><img class="img-fluid"  src="../img/rank_icon/Rank_'+tier.split(" ")[0]+'.png" style="width:85px; height:85px; border-radius:70%;"></h5>'+
                                 '</div>'+
                                 '<div class="col-md-5 p-3">'+
                                      '<h4><strong>'+tier+'</strong></h4>'+
@@ -169,7 +169,7 @@ function MostChampion(data){
         champName_kr=champions[i].name;
          html+='<div class="col-md-12 row">'+
                             '<div class="col-md-2 p-1">'+
-                                     '<img class="img-fluid"  src="../img/champion/'+champName+'.png"  width="50px" height="50px" style="border-radius: 100%;">'+
+                                     '<img class="img-fluid"  src="https://ddragon.leagueoflegends.com/cdn/14.14.1/img/champion/'+champName+'.png"  width="50px" height="50px" style="border-radius: 100%;">'+
                             '</div>'+
                             '<div class="col-md-4 p-1">'+
                                     '<h5><i>'+champName_kr+'</i></h5>'+
@@ -272,7 +272,7 @@ function championChart(data){
 
     html+=
                     '<div class="col-md-6 my-5 charts">' +
-                        '<br><h5><i>최근 사용한 챔피언을 확인하세요.</i></h5>'+
+                        '<br><h5><i>최근 솔로랭크에서 사용한 챔피언을 확인하세요.</i></h5>'+
                         '<br><h6>해당라인에서 진행한 게임 수 : '+dataOutputGame+' game</h6>'+
                         '<h6>해당라인 평균 KDA : '+Math.round((totalKda/dataOutputGame)*100)/100+'</h6>'+
                         '<br><canvas id="champNameChart"></canvas>'+

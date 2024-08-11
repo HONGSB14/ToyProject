@@ -2,11 +2,17 @@ package LDSS;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @SpringBootApplication
-public class Index {
+public class Index extends SpringBootServletInitializer{
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Index.class);
+    }
     public static void main(String[] args) {
         SpringApplication.run(Index.class);
         Date date= new Date();
